@@ -8,7 +8,7 @@ module.exports = {
         
         const sent = await interaction.reply({ 
             content: 'Pinging...', 
-            fetchReply: true 
+            withResponse: true 
         });
 
         const roundtripLatency = sent.createdTimestamp - interaction.createdTimestamp;
