@@ -31,7 +31,7 @@ async function initCommands() {
     log('Initializing and Deploying Commands...')
 
     const commandsPath = path.join(__dirname, 'commands')
-    const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'))
+    const commandFiles = fs.readdirSync(commandsPath).filter((file: string) => file.endsWith('.js'))
 
     const deployData = [] // Array to hold raw JSON data for Discord's API
 
