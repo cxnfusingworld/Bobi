@@ -6,7 +6,7 @@ const fs = require('fs')
 const path = require('path')
 
 const utilities = path.join(__dirname, 'utilities')
-const log: (message: string, logType: "error" | "warn" | void) => void = require(path.join(utilities, "logger.js"))
+const log = require(path.join(utilities, "logger.js"))
 
 const client = new Client({
     intents: [
@@ -16,12 +16,7 @@ const client = new Client({
     ]
 })
 
-const commands: {
-    [name: string]: {
-        data: any,
-        execute: (interaction: any) => void
-    }
-} = {}
+const commands = {}
 
 /// Functions \\\
 
@@ -31,7 +26,7 @@ async function initCommands() {
     log('Initializing and Deploying Commands...')
 
     const commandsPath = path.join(__dirname, 'commands')
-    const commandFiles = fs.readdirSync(commandsPath).filter((file: string) => file.endsWith('.js'))
+    const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'))
 
     const deployData = [] // Array to hold raw JSON data for Discord's API
 
@@ -64,7 +59,7 @@ async function initCommands() {
     }
 }
 
-async function onInteraction(interaction: any) {
+async function onInteraction(interaction) {
     if (!interaction.isChatInputCommand()) return
 
     const command = commands[interaction.commandName]
@@ -104,7 +99,7 @@ const express = require('express')
 const app = express()
 const PORT = process.env.PORT || 3000
 
-app.get('/', (_req: any, res: any) => {
+app.get('/', (_req, res) => {
     res.send('Bot Online')
 })
 
