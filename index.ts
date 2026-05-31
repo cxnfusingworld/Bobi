@@ -2,8 +2,11 @@
 
 require('dotenv').config()
 const { Client, GatewayIntentBits, REST, Routes } = require('discord.js')
-const fs = require('fs') // Built-in Node.js module to read files
-const path = require('path') // Built-in module to handle file paths safely
+const fs = require('fs')
+const path = require('path')
+
+const utilities = path.join(__dirname, 'utilities')
+const log: (message: string, logType: "error" | "warn" | void) => void = require(path.join(utilities, "logger.js"))
 
 const client = new Client({
     intents: [
@@ -13,13 +16,15 @@ const client = new Client({
     ]
 })
 
-const commands = {}
+const commands: {
+    [name: string]: {
+        data: any,
+        execute: (interaction: any) => void
+    }
+} = {}
 
 /// Functions \\\
 
-function log(message) {
-    console.log(`=== Bot Log ===\n\n${message}\n\n===============`)
-}
 
 // 1. Scans folder, loads modules locally, and registers them directly to Discord
 async function initCommands() {
@@ -55,11 +60,11 @@ async function initCommands() {
         
         log('All commands registered successfully with Discord!')
     } catch (error) {
-        console.error('Failed to register slash commands with Discord:', error)
+        log(`Failed to register slash commands with Discord: ${error}`, "error")
     }
 }
 
-async function onInteraction(interaction) {
+async function onInteraction(interaction: any) {
     if (!interaction.isChatInputCommand()) return
 
     const command = commands[interaction.commandName]
@@ -68,7 +73,7 @@ async function onInteraction(interaction) {
         try {
             await command.execute(interaction)
         } catch (error) {
-            console.error(`Error running command /${interaction.commandName}:`, error)
+            log(`Error running command /${interaction.commandName}: ${error}`, "error")
             
             if (interaction.replied || interaction.deferred) {
                 await interaction.followUp({ content: 'There was an error trying to execute that command! ❌', ephemeral: true })
@@ -99,10 +104,10 @@ const express = require('express')
 const app = express()
 const PORT = process.env.PORT || 3000
 
-app.get('/', (req, res) => {
+app.get('/', (_req: any, res: any) => {
     res.send('Bot Online')
 })
 
 app.listen(PORT, () => {
-    console.log(`Listening on port ${PORT}`)
+    log(`Listening on port ${PORT}`)
 })
