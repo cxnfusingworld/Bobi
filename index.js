@@ -44,18 +44,18 @@ async function initCommands() {
     }
 
     // Push the loaded commands to Discord's servers automatically
-    const rest = new REST().setToken(process.env.DISCORD_TOKEN);
+    const rest = new REST().setToken(process.env.DISCORD_TOKEN)
     try {
-        log(`Refreshing ${deployData.length} application (/) commands on Discord...`);
+        log(`Refreshing ${deployData.length} application (/) commands on Discord...`)
         
         await rest.put(
             Routes.applicationCommands(process.env.CLIENT_ID),
             { body: deployData },
-        );
+        )
         
-        log('All commands registered successfully with Discord!');
+        log('All commands registered successfully with Discord!')
     } catch (error) {
-        console.error('Failed to register slash commands with Discord:', error);
+        console.error('Failed to register slash commands with Discord:', error)
     }
 }
 
