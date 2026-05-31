@@ -46,7 +46,7 @@ function initCommands() {
 async function onMessageSent(message) {
     if (message.author.bot) return
 
-    const command = commandPrefix+commands[message.content]
+    const command = commands[commandPrefix+message.content]
 
     if (command) {
         try {
