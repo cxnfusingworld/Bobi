@@ -1,7 +1,7 @@
 /// Variables and Set Up \\\
 
 require('dotenv').config()
-const { Client, GatewayIntentBits } = require('discord.js')
+const { Client, GatewayIntentBits, REST, Routes } = require('discord.js')
 const fs = require('fs') // Built-in Node.js module to read files
 const path = require('path') // Built-in module to handle file paths safely
 
@@ -21,24 +21,42 @@ function log(message) {
     console.log(`=== Bot Log ===\n\n${message}\n\n===============`)
 }
 
-function initCommands() {
-    log('Initializing Commands...')
+// 1. Scans folder, loads modules locally, and registers them directly to Discord
+async function initCommands() {
+    log('Initializing and Deploying Commands...')
 
     const commandsPath = path.join(__dirname, 'commands')
-    
     const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'))
 
-    for (const file of commandFiles) {
+    const deployData = [] // Array to hold raw JSON data for Discord's API
 
+    for (const file of commandFiles) {
         const filePath = path.join(commandsPath, file)        
         const command = require(filePath)
         
+        // Save to our local execution dictionary
         commands[command.data.name] = command
+        
+        // Save to our deploy list for Discord
+        deployData.push(command.data.toJSON())
         
         console.log(`Loaded command: /${command.data.name}`)
     }
-    
-    log('All commands loaded successfully!')
+
+    // Push the loaded commands to Discord's servers automatically
+    const rest = new REST().setToken(process.env.DISCORD_TOKEN);
+    try {
+        log(`Refreshing ${deployData.length} application (/) commands on Discord...`);
+        
+        await rest.put(
+            Routes.applicationCommands(process.env.CLIENT_ID),
+            { body: deployData },
+        );
+        
+        log('All commands registered successfully with Discord!');
+    } catch (error) {
+        console.error('Failed to register slash commands with Discord:', error);
+    }
 }
 
 async function onInteraction(interaction) {
