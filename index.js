@@ -14,7 +14,6 @@ const client = new Client({
 })
 
 const commands = {}
-const commandPrefix = "!"
 
 /// Functions \\\
 
@@ -22,7 +21,6 @@ function log(message) {
     console.log(`=== Bot Log ===\n\n${message}\n\n===============`)
 }
 
-// This function scans your folder and loads everything automatically
 function initCommands() {
     log('Initializing Commands...')
 
@@ -35,25 +33,30 @@ function initCommands() {
         
         const command = require(filePath)
         
-        commands[commandPrefix+command.name] = command
+        commands[command.data.name] = command
         
-        console.log(`Loaded command: ${command.name}`)
+        console.log(`Loaded command: /${command.data.name}`)
     }
     
     log('All commands loaded successfully!')
 }
 
-async function onMessageSent(message) {
-    if (message.author.bot) return
+async function onInteraction(interaction) {
+    if (!interaction.isChatInputCommand()) return
 
-    const command = commands[message.content]
+    const command = commands[interaction.commandName]
 
     if (command) {
         try {
-            await command.execute(message)
+            await command.execute(interaction)
         } catch (error) {
-            console.error(`Error running command ${message.content}:`, error)
-            await message.reply('There was an error trying to execute that command! ❌')
+            console.error(`Error running command /${interaction.commandName}:`, error)
+            
+            if (interaction.replied || interaction.deferred) {
+                await interaction.followUp({ content: 'There was an error trying to execute that command! ❌', ephemeral: true })
+            } else {
+                await interaction.reply({ content: 'There was an error trying to execute that command! ❌', ephemeral: true })
+            }
         }
     }
 }
@@ -64,7 +67,7 @@ async function onMessageSent(message) {
 initCommands()
 
 // Events
-client.on('messageCreate', onMessageSent)
+client.on('interactionCreate', onInteraction)
 
 client.once('ready', () => {
    log(`Logged in as ${client.user.tag}!`)
