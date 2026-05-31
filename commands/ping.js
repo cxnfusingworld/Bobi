@@ -15,7 +15,7 @@ module.exports = {
         const websocketPing = interaction.client.ws.ping;
 
         await interaction.editReply(
-            `🏓 Pong
+            `🏓 Pong!
 • **Roundtrip Latency:** \`${roundtripLatency}ms\`
 • **Websocket Ping:** \`${websocketPing}ms\``
         );
