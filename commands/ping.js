@@ -19,5 +19,6 @@ module.exports = {
 • **Roundtrip Latency:** \`${roundtripLatency}ms\`
 • **Websocket Ping:** \`${websocketPing}ms\``
         );
+        
     },
 };
