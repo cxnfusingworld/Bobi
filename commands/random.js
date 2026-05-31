@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder } = require('discord.js')
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -7,27 +7,27 @@ module.exports = {
         .addNumberOption(option =>
             option.setName('minimum')
                 .setDescription('The minimum value')
-                )
+        )
         .addNumberOption(option =>
             option.setName('maximum')
                 .setDescription('The maximum value')
-                ),
+        ),
     async execute(interaction) {
+        
+        let min = interaction.options.getNumber('minimum') ?? 0
+        let max = interaction.options.getNumber('maximum') ?? 100
 
-        var min = interaction.options.getString('minimum') || 0
-        var max = interaction.options.getString('maximum') || 100
-
-        if (min > max)
-            var prevMin = min
+        if (min > max) {
+            const prevMin = min
             min = max
             max = prevMin
+        }
 
-        const final = (Math.random()*(max-min)+min).toString()
+        const randomNumber = Math.round(Math.random() * (max - min) + min)
+        const final = randomNumber.toFixed(2) 
 
         await interaction.reply({
-            content: final,
-            // ephemeral: true,
+            content: `Your random number between **${min}** and **${max}** is: **${final}**`,
         })
-
     },
-};
+}
