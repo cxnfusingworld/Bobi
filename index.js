@@ -35,7 +35,7 @@ function initCommands() {
         
         const command = require(filePath)
         
-        commands[command.name] = command
+        commands[commandPrefix+command.name] = command
         
         console.log(`Loaded command: ${command.name}`)
     }
@@ -46,7 +46,7 @@ function initCommands() {
 async function onMessageSent(message) {
     if (message.author.bot) return
 
-    const command = commands[commandPrefix+message.content]
+    const command = commands[message.content]
 
     if (command) {
         try {
