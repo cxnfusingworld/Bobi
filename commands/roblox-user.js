@@ -44,7 +44,7 @@ module.exports = {
 
             // 4. Build the beautiful Embed Box!
             const robloxEmbed = new EmbedBuilder()
-                .setColor('rgb(31, 72, 255)') // Roblox Red!
+                .setColor('#1f48ff') // Roblox Red!
                 .setTitle(`${displayName} (@${realName})`)
                 .setURL(`https://www.roblox.com/users/${userId}/profile`)
                 .setDescription(detailData.description || '*No description set.*')
