@@ -10,9 +10,9 @@ module.exports = {
                 .setDescription('Your move')
                 .setRequired(true)
                 .addChoices(
-                    { name: 'Rock 🪨', value: 'rock' },
-                    { name: 'Paper 📄', value: 'paper' },
-                    { name: 'Scissors ✂️', value: 'scissors' }
+                    { name: 'Rock', value: 'rock' },
+                    { name: 'Paper', value: 'paper' },
+                    { name: 'Scissors', value: 'scissors' }
                 )),
 
     // 2. The game logic
@@ -27,7 +27,7 @@ module.exports = {
         // Determine the winner
         let result = ''
         if (userChoice === botChoice) {
-            result = "It's a tie! 👔"
+            result = "It's a tie!"
         } else if (
             (userChoice === 'rock' && botChoice === 'scissors') ||
             (userChoice === 'paper' && botChoice === 'rock') ||
@@ -39,7 +39,7 @@ module.exports = {
         }
 
         // Format emojis for the final message
-        const emojiMap = { rock: '🪨', paper: '📄', scissors: '✂️' }
+        const emojiMap = { rock: 'Rock 🪨', paper: 'Paper 📄', scissors: 'Scissors ✂️' }
 
         // 3. Reply to the user privately
         await interaction.reply({
