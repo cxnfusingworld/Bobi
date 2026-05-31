@@ -1,7 +1,8 @@
+/// Variables and Set Up \\\
+
 require('dotenv').config(); 
 const { Client, GatewayIntentBits } = require('discord.js');
 
-// Create a new bot instance and give it permissions
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
@@ -10,32 +11,48 @@ const client = new Client({
     ]
 });
 
-// Run this code once when the bot successfully logs in
-client.once('ready', () => {
-    console.log(`Logged in as ${client.user.tag}!`);
-});
+/// Functions \\\
 
-// Run this code every time a message is sent in your server
-client.on('messageCreate', async (message) => {
-    // Stop the bot from responding to itself or other bots
+function log(message) {
+    function log(message) {
+    console.log(`=== Bot Log ===
+        
+${message}
+
+===============`);
+}
+}
+
+async function onMessageSent(message) {
     if (message.author.bot) return;
 
-    // If a human types !ping, reply with Pong!
     if (message.content === '!ping') {
         await message.reply('Pong! 🏓');
     }
+}
+
+/// Initialization \\\
+
+// Events
+
+client.on('messageCreate', onMessageSent);
+
+client.once('ready', () => {
+   log(`Logged in as ${client.user.tag}!`);
 });
 
-// Log the bot in using the secret token from your .env file
+// Login
+
 client.login(process.env.DISCORD_TOKEN);
 
-// Tiny web server to keep Render happy on the free tier
+// Uptime Handler
+
 const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.get('/', (req, res) => {
-    res.send('Goober is awake!');
+    res.send('Bot Online');
 });
 
 app.listen(PORT, () => {
