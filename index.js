@@ -28,3 +28,16 @@ client.on('messageCreate', async (message) => {
 
 // Log the bot in using the secret token from your .env file
 client.login(process.env.DISCORD_TOKEN);
+
+// Tiny web server to keep Render happy on the free tier
+const express = require('express');
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+app.get('/', (req, res) => {
+    res.send('Goober is awake!');
+});
+
+app.listen(PORT, () => {
+    console.log(`Listening on port ${PORT}`);
+});
