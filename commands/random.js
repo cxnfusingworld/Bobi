@@ -24,6 +24,7 @@ module.exports = {
         }
 
         const randomNumber = Math.round(Math.random() * (max - min) + min)
+        const final = randomNumber.toString()
 
         await interaction.reply({
             content: `Your random number between **${min}** and **${max}** is: **${final}**`,
