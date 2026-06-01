@@ -19,7 +19,7 @@ module.exports = async function (message) {
             // On reply
         } else {
             // On Ping
-            var chosenMessage = messages[Math.floor(Math.random()*messages.length)]
+            let chosenMessage = messages[Math.floor(Math.random()*messages.length)]
             chosenMessage = chosenMessage.replaceAll("<user>", `<@${message.author.id}>`)
             return await message.reply(chosenMessage);
         }

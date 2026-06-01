@@ -1,5 +1,5 @@
 module.exports = function log(message, logType) {
-    var final = `=== Bot Log ===\n\n${message}\n\n===============`
+    let final = `=== Bot Log ===\n\n${message}\n\n===============`
     logType  = (logType || "").toLowerCase()
     if (logType === "error")
         console.error(final)

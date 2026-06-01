@@ -13,7 +13,7 @@ module.exports = {
     async execute(interaction) {
         
         const targetCommand = interaction.client.application.commands.cache.find(cmd => cmd.name === 'selfie')
-        var selfieCommand
+        let selfieCommand
 
         if (targetCommand)
             selfieCommand = `</selfie:${targetCommand.id}>`
