@@ -14,16 +14,18 @@ module.exports = {
         const { resource } = await interaction.reply({ 
             content: 'Pinging...', 
             withResponse: true,
-            // ephemeral: true,
+            ephemeral: true,
         });
 
-        const roundtripLatency = resource.message.createdTimestamp - interaction.createdTimestamp;
-        const websocketPing = interaction.client.ws.ping;
+        const roundtripLatency = Math.max(resource.message.createdTimestamp - interaction.createdTimestamp, 0);
+        
+        const wsPing = interaction.client.ws.ping;
+        const websocketPingDisplay = wsPing < 0 ? 'Calculating...' : `${wsPing}ms`;
 
         await interaction.editReply(
             `🏓 pong!
 • **roundtrip latency:** \`${roundtripLatency}ms\`
-• **websocket ping:** \`${websocketPing}ms\``
+• **websocket ping:** \`${websocketPingDisplay}\``
         );
         
     },
