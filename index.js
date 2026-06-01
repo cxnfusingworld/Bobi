@@ -17,33 +17,30 @@ const client = new Client({
 })
 
 const commands = {}
+const messageSentEvents = {}
 
 /// Functions \\\
 
-
-// 1. Scans folder, loads modules locally, and registers them directly to Discord
 async function initCommands() {
+
     log('Initializing and Deploying Commands...')
 
     const commandsPath = path.join(__dirname, 'commands')
     const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'))
 
-    const deployData = [] // Array to hold raw JSON data for Discord's API
+    const deployData = []
 
     for (const file of commandFiles) {
         const filePath = path.join(commandsPath, file)        
         const command = require(filePath)
         
-        // Save to our local execution dictionary
         commands[command.data.name] = command
         
-        // Save to our deploy list for Discord
         deployData.push(command.data.toJSON())
         
         console.log(`Loaded command: /${command.data.name}`)
     }
 
-    // Push the loaded commands to Discord's servers automatically
     const rest = new REST().setToken(process.env.DISCORD_TOKEN)
     try {
         log(`Refreshing ${deployData.length} application (/) commands on Discord...`)
@@ -56,7 +53,30 @@ async function initCommands() {
         log('All commands registered successfully with Discord!')
     } catch (error) {
         log(`Failed to register slash commands with Discord: ${error}`, "error")
+    
     }
+
+}
+
+async function initMessageEvents() {
+    
+    log('Initializing Message Sent Events...')
+
+    const messageSentPath = path.join(__dirname, 'message-sent-events')
+    const messageSentFiles = fs.readdirSync(messageSentPath).filter(file => file.endsWith('.js'))
+
+    for (const file of messageSentFiles) {
+
+        const filePath = path.join(messageSentPath, file)        
+        const event = require(filePath)
+        
+        messageSentEvents.push(event)
+        
+        // console.log(`Loaded message sent event: /${event.data.name}`)
+    }
+
+    log('All message sent events initialized!')
+
 }
 
 async function onInteraction(interaction) {
@@ -79,6 +99,14 @@ async function onInteraction(interaction) {
     }
 }
 
+async function onMessageSent(message) {
+    
+    for (const event of messageSentEvents) {
+        event(message)
+    }
+
+}
+
 /// Initialization \\\
 
 // Loading
@@ -86,6 +114,7 @@ initCommands()
 
 // Events
 client.on('interactionCreate', onInteraction)
+client.on('messageCreate', onMessageSent)
 
 client.once('clientReady', () => {
    log(`Logged in as ${client.user.tag}!`)
@@ -96,6 +125,7 @@ client.login(process.env.DISCORD_TOKEN)
 
 // Uptime Handler
 const express = require('express')
+const { table } = require('console')
 const app = express()
 const PORT = process.env.PORT || 3000
 
