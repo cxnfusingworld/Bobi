@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, InteractionContextType } = require('discord.js');
+const { SlashCommandBuilder, InteractionContextType } = require('discord.js')
 
 const snippets = {
     luau: '```lua\nprint("Hello World!")\n```',
@@ -23,8 +23,9 @@ const snippets = {
     powershell: '```powershell\nWrite-Host "Hello World!"\n```',
     sql: '```sql\nSELECT \'Hello World!\';\n```',
     html: '```html\n<!DOCTYPE html>\n<html>\n<body>\n    <h1>Hello World!</h1>\n</body>\n</html>\n```',
-    asm: '```asm\nsection .data\nmsg db "Hello World!",0x0A\nlen equ $-msg\n\nsection .text\nglobal _start\n_start:\n    mov edx,len\n    mov ecx,msg\n    mov ebx,1\n    mov eax,4\n    int 0x80\n    mov eax,1\n    int 0x80\n```'
-};
+    asm: '```x86asm\nsection .data\nmsg db "Hello World!",0x0A\nlen equ $-msg\n\nsection .text\nglobal _start\n_start:\n    mov edx,len\n    mov ecx,msg\n    mov ebx,1\n    mov eax,4\n    int 0x80\n    mov eax,1\n    int 0x80\n```',
+    cat: '```\nmeow meow, meow mreow\n.. mew```'
+}
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -56,7 +57,8 @@ module.exports = {
                     { name: 'PowerShell', value: 'powershell' },
                     { name: 'SQL', value: 'sql' },
                     { name: 'HTML/CSS', value: 'html' },
-                    { name: 'Assembly (x86)', value: 'asm' }
+                    { name: 'Assembly (x86)', value: 'asm' },
+                    { name: 'Cat', value: 'cat' },
                 )
         )
         .setContexts([
@@ -66,12 +68,12 @@ module.exports = {
         ]),
 
     async execute(interaction) {
-        const language = interaction.options.getString("language") || "luau";
-        const final = snippets[language] || snippets.luau;
+        const language = interaction.options.getString("language") || "luau"
+        const final = snippets[language] || snippets.luau
 
         await interaction.reply({
             content: final,
             // ephemeral: true,
-        });
+        })
     },
-};
+}
