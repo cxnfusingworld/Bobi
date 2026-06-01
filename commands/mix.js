@@ -34,8 +34,8 @@ module.exports = {
         if (first === second) {
             const emojiMap = { red: '🔴', blue: '🔵', yellow: '🟡', white: '⚪', black: '⚫' };
             return await interaction.reply({
-                content: `mixing ${emojiMap[first]} and ${emojiMap[second]} is just more **${first}** lol`,
-                ephemeral: true
+                content: `mixing ${emojiMap[first]} ${first} and ${emojiMap[second]} ${second} is just more ${first} lol`,
+                // ephemeral: true
             });
         }
 
@@ -59,12 +59,12 @@ module.exports = {
 
         if (result) {
             await interaction.reply({
-                content: `${emojiMap[first]} **${first}** + ${emojiMap[second]} **${second}** makes \n\n**${result.name}**!`,
+                content: `${emojiMap[first]} ${first} + ${emojiMap[second]} ${second} makes \n**${result.name}**!`,
             });
         } else {
             await interaction.reply({
                 content: `i genuinely have NO clue vro`,
-                ephemeral: true
+                // ephemeral: true
             });
         }
     },
