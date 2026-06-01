@@ -26,8 +26,8 @@ module.exports = {
             `🏓 pong!
 -# why are you playing ping pong with a cat..?
 \`\`\`ansi
-[32mroundtrip latency:[39m \`${roundtripLatency}ms\`
-[32mwebsocket ping:[39m    \`${websocketPingDisplay}\`
+[32mroundtrip latency:[39m ${roundtripLatency}ms
+   [32mwebsocket ping:[39m ${websocketPingDisplay}
 \`\`\``
         );
         
