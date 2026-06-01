@@ -17,7 +17,7 @@ const client = new Client({
 })
 
 const commands = {}
-const messageSentEvents = {}
+const messageSentEvents = []
 
 /// Functions \\\
 
@@ -113,6 +113,7 @@ async function onMessageSent(message) {
 
 // Loading
 initCommands()
+initMessageEvents()
 
 // Events
 client.on('interactionCreate', onInteraction)
