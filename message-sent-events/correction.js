@@ -1,9 +1,13 @@
 const map = {
+
     ["confusion"]: "cxnfusion",
     ["confusing"]: "cxnfusing",
     ["confused"]: "cxnfused",
     ["confuse"]: "cxnfuse",
+
     ["kleo"]: "ǝuoɓoloǝʞılʞoǝlʞǝoʞılʞǝoʞılʞ",
+    ["khleo"]: "ǝuoɓoloǝʞılʞoǝlʞǝoʞılʞǝoʞılʞ",
+    
 }
 
 module.exports = async function (message) {
