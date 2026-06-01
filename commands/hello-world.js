@@ -12,6 +12,7 @@ module.exports = {
                     { name: 'JavaScript', value: 'js' },
                     { name: 'Python', value: 'python' },
                     { name: 'C++', value: 'cpp' },
+                    { name: 'C#', value: 'csharp' },
                     { name: 'HTML/CSS', value: 'html' }
                 )
         )
@@ -27,11 +28,13 @@ module.exports = {
         if (language === "luau") {
             final = '```lua\nprint("Hello World!")\n```'
         } else if (language === "js") {
-            final = '```javascript\nconsole.log("Hello World!")\n```'
+            final = '```javascript\nconsole.log("Hello World!");\n```'
         } else if (language === "python") {
             final = '```python\nprint("Hello World!")\n```'
         } else if (language === "cpp") {
             final = '```cpp\n#include <iostream>\n\nint main() {\n    std::cout << "Hello World!\\n"\n    return 0\n}\n```'
+        } else if (language === "csharp") {
+            final = '```csharp\nConsole.WriteLine("Hello, World!");\n```'
         } else if (language === "html") {
             final = '```html\n<!DOCTYPE html>\n<html>\n<body>\n    <h1>Hello World!</h1>\n</body>\n</html>\n```'
         }
