@@ -10,38 +10,40 @@ module.exports = {
                 .setDescription('watcha gonna play??')
                 .setRequired(true)
                 .addChoices(
-                    { name: 'Rock', value: 'rock' },
-                    { name: 'Paper', value: 'paper' },
-                    { name: 'Scissors', value: 'scissors' }
+                    { name: 'rock', value: 'rock' },
+                    { name: 'paper', value: 'paper' },
+                    { name: 'scissors', value: 'scissors' }
                 )),
 
-    // 2. The game logic
     async execute(interaction) {
-        // Grab what the user chose from the argument
         const userChoice = interaction.options.getString('choice')
         
-        // Let Goober pick randomly
         const botChoices = ['rock', 'paper', 'scissors']
-        const botChoice = botChoices[Math.floor(Math.random() * botChoices.length)]
+        let botChoice = botChoices[Math.floor(Math.random() * botChoices.length)]
+        const funnyPick = Math.random()>0.95
 
-        // Determine the winner
-        let result = ''
-        if (userChoice === botChoice) {
-            result = "It's a tie!"
-        } else if (
-            (userChoice === 'rock' && botChoice === 'scissors') ||
-            (userChoice === 'paper' && botChoice === 'rock') ||
-            (userChoice === 'scissors' && botChoice === 'paper')
-        ) {
-            result = 'you win i guess, play me again ima win'
-        } else {
-            result = 'i won you suck'
+        if (funnyPick) {
+            botChoice = 'wd'
         }
 
-        // Format emojis for the final message
-        const emojiMap = { rock: 'rock 🪨', paper: 'paper 📄', scissors: 'scissors ✂️' }
+        let result = ''
+        if (userChoice === botChoice) {
+            result = "damn we chose the same thing, its a tie ig\n-# in my opinion i won tho"
+        } else if (
+            (botChoice !== 'wd') &&
+            ((userChoice === 'rock' && botChoice === 'scissors') ||
+            (userChoice === 'paper' && botChoice === 'rock') ||
+            (userChoice === 'scissors' && botChoice === 'paper'))
+        ) {
+            result = 'you win *i guess*, play me again ima win'
+        } else if (botChoice === 'wd') {
+            result = 'you read that right.\n# <:innocent:1511136501927247993>'
+        } else {
+            result = 'i won, u lost to a **cat** lol\n# <:laughing:1511136962659094699>'
+        }
 
-        // 3. Reply to the user privately
+        const emojiMap = { rock: 'rock 🪨', paper: 'paper 📄', scissors: 'scissors ✂️', wd: 'world domination.' }
+
         await interaction.reply({
             content: `u chose: ${emojiMap[userChoice]}\ni chose: ${emojiMap[botChoice]}\n\n${result}`,
             // ephemeral: true
