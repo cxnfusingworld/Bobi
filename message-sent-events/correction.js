@@ -11,6 +11,7 @@ const map = {
 }
 
 module.exports = async function (message) {
+    if (message.author.bot) return
 
     for (const [key, value] of Object.entries(map)) {
         const messageContent = message.content.toLowerCase()
