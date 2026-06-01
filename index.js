@@ -112,6 +112,9 @@ async function onMessageSent(message) {
 }
 
 async function checkGuildAccess(guild) {
+
+    console.log(`Checking whitelisted server ${guild.name}...`)
+
     if (!whitelistedServers.includes(guild.id)) {
         log(`Unauthorized access detected in server: ${guild.name} (${guild.id}). Leaving...`, "warn")
         try {
@@ -138,11 +141,12 @@ client.on('interactionCreate', onInteraction)
 client.on('messageCreate', onMessageSent)
 
 client.once('ready', async () => {
-   log(`Logged in as ${client.user.tag}!`)
+    log(`Logged in as ${client.user.tag}!`)
    
-   for (const [id, guild] of client.guilds.cache) {
-       await checkGuildAccess(guild)
-   }
+    console.log(`Checking whitelisted servers...`)
+    for (const [id, guild] of client.guilds.cache) {
+        await checkGuildAccess(guild)
+    }
 })
 
 // Login
