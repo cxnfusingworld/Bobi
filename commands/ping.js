@@ -14,7 +14,7 @@ module.exports = {
         const { resource } = await interaction.reply({ 
             content: 'Pinging...', 
             withResponse: true,
-            ephemeral: true,
+            // ephemeral: true,
         });
 
         const roundtripLatency = resource.message.createdTimestamp - interaction.createdTimestamp;
