@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, AttachmentBuilder } = require('discord.js')
+const { SlashCommandBuilder, AttachmentBuilder, InteractionContextType } = require('discord.js')
 
 const urls = [
     'https://cdn.discordapp.com/attachments/1508630000088256723/1510844667439087616/20260531_190959.jpg?ex=6a1e4b3e&is=6a1cf9be&hm=b1f8fdb276b210d4102f6dd464a7799aafbc9e8260d283ad624aaad8a82a832b&',
