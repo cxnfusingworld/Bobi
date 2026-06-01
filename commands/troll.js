@@ -20,6 +20,12 @@ module.exports = {
         const sub = interaction.options.getSubcommand()
 
         if (sub === 'fake-ban') {
+            if (!interaction.inGuild()) {
+                return await interaction.reply({
+                    content: 'fake ban only works in servers with me added, mb 💔',
+                    ephemeral: true
+                });
+            }
             
             const allowedRoles = ['1455795090927780014'] 
             let allowedToUse = false
