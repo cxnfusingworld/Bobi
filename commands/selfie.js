@@ -18,7 +18,7 @@ module.exports = {
         ]),
     async execute(interaction) {
         const chosen = attachments[Math.floor(Math.random() * attachments.length)]
-        interaction.reply({
+        await interaction.reply({
             files: [chosen]
         })
     },
