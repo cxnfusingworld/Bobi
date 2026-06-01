@@ -89,11 +89,13 @@ async function onInteraction(interaction) {
             await command.execute(interaction)
         } catch (error) {
             log(`Error running command /${interaction.commandName}: ${error}`, "error")
+
+            const errorMessage = 'hmm smth broke 🤔🤔 try again in a bit'
             
             if (interaction.replied || interaction.deferred) {
-                await interaction.followUp({ content: 'There was an error trying to execute that command! ❌', ephemeral: true })
+                await interaction.followUp({ content: errorMessage, ephemeral: true })
             } else {
-                await interaction.reply({ content: 'There was an error trying to execute that command! ❌', ephemeral: true })
+                await interaction.reply({ content: errorMessage, ephemeral: true })
             }
         }
     }

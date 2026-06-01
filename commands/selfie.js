@@ -1,11 +1,9 @@
 const { SlashCommandBuilder, AttachmentBuilder, InteractionContextType } = require('discord.js')
-const path = require('path');
+const path = require('path')
+const fs = require('fs')
 
-const attachments = []
-
-for (const selfie in path.join(__dirname, "../assets", "selfie")) {
-    attachments.push(selfie)
-}
+const selfieFolderPath = path.join(__dirname, "../assets/selfie")
+const catSelfies = fs.readdirSync(selfieFolderPath)
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -17,9 +15,15 @@ module.exports = {
             InteractionContextType.PrivateChannel
         ]),
     async execute(interaction) {
-        const chosen = attachments[Math.floor(Math.random() * attachments.length)]
-        await interaction.reply({
-            files: [chosen]
+        await interaction.deferReply()
+
+        const randomImageName = catSelfies[Math.floor(Math.random() * catSelfies.length)]
+        const fullFilePath = path.join(selfieFolderPath, randomImageName)
+
+        const attachment = new AttachmentBuilder(fullFilePath)
+
+        await interaction.editReply({
+            files: [attachment]
         })
     },
 }
