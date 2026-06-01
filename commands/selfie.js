@@ -24,7 +24,12 @@ for (const url of urls) {
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('selfie')
-        .setDescription('gives you a cute pic of bobi'),
+        .setDescription('gives you a cute pic of bobi')
+        .setContexts([
+            InteractionContextType.Guild, 
+            InteractionContextType.BotDM, 
+            InteractionContextType.PrivateChannel
+        ]),
     async execute(interaction) {
         const chosen = attachments[Math.floor(Math.random() * attachments.length)]
         interaction.reply({
