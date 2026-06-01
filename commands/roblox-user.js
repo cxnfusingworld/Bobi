@@ -54,8 +54,8 @@ module.exports = {
                 .setDescription(detailData.description || '*very boring person who has no description 🤔*')
                 .setThumbnail(avatarUrl)
                 .addFields(
-                    { name: 'User ID', value: `\`${userId}\``, inline: true },
-                    { name: 'Account Created', value: '\`createdDate\`', inline: true }
+                    { name: 'User ID', value: `${userId}`, inline: true },
+                    { name: 'Account Created', value: createdDate, inline: true }
                 )
                 // .setTimestamp()
 
