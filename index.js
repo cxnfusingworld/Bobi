@@ -19,6 +19,8 @@ const client = new Client({
 const commands = {}
 const messageSentEvents = []
 
+const whitelistedServers = ['1510727709473509426', '1440792579351515188']
+
 /// Functions \\\
 
 async function initCommands() {
@@ -109,6 +111,22 @@ async function onMessageSent(message) {
 
 }
 
+async function checkGuildAccess(guild) {
+    if (!whitelistedServers.includes(guild.id)) {
+        log(`Unauthorized access detected in server: ${guild.name} (${guild.id}). Leaving...`, "warn")
+        try {
+            const systemChannel = guild.systemChannel || guild.channels.cache.find(ch => ch.isTextBased() && ch.permissionsFor(guild.members.me).has('SendMessages'))
+            
+            if (systemChannel) {
+                await systemChannel.send("<:scared:1511147876150018208> wth where am i?? im leaving cya\n-# if you want bobi in this server DM @cxnfusion")
+            }
+        } catch (err) {
+            log(`Could not send goodbye message in ${guild.name}: ${err.message}`)
+        }
+        await guild.leave()
+    }
+}
+
 /// Initialization \\\
 
 // Loading
@@ -119,12 +137,21 @@ initMessageEvents()
 client.on('interactionCreate', onInteraction)
 client.on('messageCreate', onMessageSent)
 
-client.once('clientReady', () => {
+client.once('ready', async () => {
    log(`Logged in as ${client.user.tag}!`)
+   
+   for (const [id, guild] of client.guilds.cache) {
+       await checkGuildAccess(guild)
+   }
 })
 
 // Login
 client.login(process.env.DISCORD_TOKEN)
+
+// Server Check
+client.on('guildCreate', async (guild) => {
+    await checkGuildAccess(guild)
+})
 
 // Uptime Handler
 const express = require('express')
