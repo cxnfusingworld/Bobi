@@ -59,7 +59,7 @@ module.exports = {
 
         if (result) {
             await interaction.reply({
-                content: `${emojiMap[first]} ${first} + ${emojiMap[second]} ${second} makes \n**${result.name}**!`,
+                content: `${emojiMap[first]} ${first} + ${emojiMap[second]} ${second} makes **${result.name}**`,
             });
         } else {
             await interaction.reply({
