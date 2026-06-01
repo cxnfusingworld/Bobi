@@ -17,6 +17,10 @@ module.exports = {
                         .setDescription('user to "ban"')
                         .setRequired(true)
                 )
+                .addStringOption(option =>
+                    option.setName('reason')
+                        .setDescription('reason they were "banned"')
+                )
         ),
 
     async execute(interaction) {
@@ -53,6 +57,13 @@ module.exports = {
             const options = { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true }
             const discordTimestamp = new Date().toLocaleString('en-US', options).replace(',', '')
 
+            const additionalReason = interaction.options.getString('reason')
+            let description = `<@${targetUser.id}>`
+
+            if (additionalReason) {
+                description = description + `\nReason: ${additionalReason}`
+            }
+
             const logEmbed = new EmbedBuilder()
                 .setColor('#EE5C5C')
                 .setAuthor({ 
@@ -60,7 +71,7 @@ module.exports = {
                     iconURL: targetUser.displayAvatarURL({ dynamic: true }) 
                 })
                 .setTitle('Member banned')
-                .setDescription(`<@${targetUser.id}>`)
+                .setDescription(description)
                 .setFooter({ 
                     text: `ID: ${targetUser.id} • ${discordTimestamp}` 
                 })
