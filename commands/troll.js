@@ -1,9 +1,12 @@
-const { SlashCommandBuilder, EmbedBuilder, PermissionsBitField } = require('discord.js')
+const { SlashCommandBuilder, EmbedBuilder, PermissionsBitField, InteractionContextType } = require('discord.js')
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('troll')
         .setDescription('troll ppl for fun lol')
+        .setContexts([
+            InteractionContextType.Guild,
+        ])
         
         // Fake Ban
         .addSubcommand(subcommand =>
