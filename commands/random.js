@@ -3,14 +3,14 @@ const { SlashCommandBuilder } = require('discord.js')
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('random')
-        .setDescription('Gives you a random number!')
+        .setDescription('gives u a random number')
         .addNumberOption(option =>
             option.setName('minimum')
-                .setDescription('The minimum value')
+                .setDescription('minimum value')
         )
         .addNumberOption(option =>
             option.setName('maximum')
-                .setDescription('The maximum value')
+                .setDescription('maximum value')
         ),
     async execute(interaction) {
         
@@ -27,7 +27,7 @@ module.exports = {
         const final = randomNumber.toString()
 
         await interaction.reply({
-            content: `Your random number between **${min}** and **${max}** is: **${final}**`,
+            content: `ur random number between **${min}** and **${max}** is: **${final}**`,
         })
     },
 }

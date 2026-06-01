@@ -4,10 +4,10 @@ const fetch = require('node-fetch')
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('roblox-user')
-        .setDescription('Fetches information about a Roblox user!')
+        .setDescription('finds sum info about someone')
         .addStringOption(option =>
             option.setName('username')
-                .setDescription('The Roblox username to lookup')
+                .setDescription('the username of the person')
                 .setRequired(true)
         ),
 
@@ -25,7 +25,7 @@ module.exports = {
             const userData = await userResponse.json()
 
             if (!userData.data || userData.data.length === 0) {
-                return await interaction.editReply(`Could not find a Roblox user named **${username}** ❌`)
+                return await interaction.editReply(`${username} is NOT a user bro`)
             }
 
             const player = userData.data[0]
@@ -42,20 +42,18 @@ module.exports = {
             const thumbData = await thumbResponse.json()
             const avatarUrl = thumbData.data?.[0]?.imageUrl || ''
 
-            // 4. Build the beautiful Embed Box!
             const robloxEmbed = new EmbedBuilder()
-                .setColor('#1f48ff') // Roblox Red!
+                .setColor('#1f48ff')
                 .setTitle(`${displayName} (@${realName})`)
                 .setURL(`https://www.roblox.com/users/${userId}/profile`)
-                .setDescription(detailData.description || '*No description set.*')
-                .setThumbnail(avatarUrl) // Puts the avatar in the top right corner
+                .setDescription(detailData.description || '*very boring person who has no description 🤔*')
+                .setThumbnail(avatarUrl)
                 .addFields(
-                    { name: '🆔 User ID', value: `\`${userId}\``, inline: true },
-                    { name: '📆 Account Created', value: createdDate, inline: true }
+                    { name: 'User ID', value: `\`${userId}\``, inline: true },
+                    { name: 'Account Created', value: '\`createdDate\`', inline: true }
                 )
                 // .setTimestamp()
 
-            // Send the embed back to the channel
             await interaction.editReply({ embeds: [robloxEmbed] })
 
         } catch (error) {

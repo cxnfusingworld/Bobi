@@ -4,10 +4,10 @@ module.exports = {
     // 1. Define the command and its arguments (options)
     data: new SlashCommandBuilder()
         .setName('rps')
-        .setDescription('Play Rock, Paper, Scissors with Goober!')
+        .setDescription('rock paper scissors')
         .addStringOption(option =>
             option.setName('choice')
-                .setDescription('Your move')
+                .setDescription('watcha gonna play??')
                 .setRequired(true)
                 .addChoices(
                     { name: 'Rock', value: 'rock' },
@@ -33,18 +33,18 @@ module.exports = {
             (userChoice === 'paper' && botChoice === 'rock') ||
             (userChoice === 'scissors' && botChoice === 'paper')
         ) {
-            result = 'You win! 🎉'
+            result = 'you win i guess, play me again ima win'
         } else {
-            result = 'Goober wins! 🤖'
+            result = 'i won you suck'
         }
 
         // Format emojis for the final message
-        const emojiMap = { rock: 'Rock 🪨', paper: 'Paper 📄', scissors: 'Scissors ✂️' }
+        const emojiMap = { rock: 'rock 🪨', paper: 'paper 📄', scissors: 'scissors ✂️' }
 
         // 3. Reply to the user privately
         await interaction.reply({
-            content: `**Rock, Paper, Scissors!**\n\nYou chose: ${emojiMap[userChoice]}\nGoober chose: ${emojiMap[botChoice]}\n\n**Result:** ${result}`,
-            ephemeral: true // <-- THIS makes the message private (Only you can see this)
+            content: `u chose: ${emojiMap[userChoice]}\ni chose: ${emojiMap[botChoice]}\n\n${result}`,
+            // ephemeral: true
         })
     }
 }

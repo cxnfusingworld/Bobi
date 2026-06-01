@@ -3,7 +3,7 @@ const { SlashCommandBuilder } = require('discord.js');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('ping')
-        .setDescription('Replies with the bot latency and websocket ping.'),
+        .setDescription('gives u the latency and ping stuff'),
     async execute(interaction) {
         
         const sent = await interaction.reply({ 
@@ -15,9 +15,9 @@ module.exports = {
         const websocketPing = interaction.client.ws.ping;
 
         await interaction.editReply(
-            `🏓 Pong!
-• **Roundtrip Latency:** \`${roundtripLatency}ms\`
-• **Websocket Ping:** \`${websocketPing}ms\``
+            `🏓 pong!
+• **roundtrip latency:** \`${roundtripLatency}ms\`
+• **websocket ping:** \`${websocketPing}ms\``
         );
         
     },
