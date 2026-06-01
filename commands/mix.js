@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder, InteractionContextType } = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -25,7 +25,12 @@ module.exports = {
                     { name: 'Yellow 🟡', value: 'yellow' },
                     { name: 'White ⚪', value: 'white' },
                     { name: 'Black ⚫', value: 'black' }
-                )),
+                ))
+        .setContexts([
+            InteractionContextType.Guild, 
+            InteractionContextType.BotDM, 
+            InteractionContextType.PrivateChannel
+        ]),
 
     async execute(interaction) {
         const first = interaction.options.getString('first-color');

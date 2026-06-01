@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js')
+const { SlashCommandBuilder, EmbedBuilder, InteractionContextType } = require('discord.js')
 const fetch = require('node-fetch')
 
 module.exports = {
@@ -9,7 +9,12 @@ module.exports = {
             option.setName('username')
                 .setDescription('the username of the person')
                 .setRequired(true)
-        ),
+        )
+        .setContexts([
+            InteractionContextType.Guild, 
+            InteractionContextType.BotDM, 
+            InteractionContextType.PrivateChannel
+        ]),
 
     async execute(interaction) {
         const username = interaction.options.getString('username')

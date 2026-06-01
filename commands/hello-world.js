@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require('discord.js')
+const { SlashCommandBuilder, InteractionContextType } = require('discord.js')
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -14,7 +14,12 @@ module.exports = {
                     { name: 'C++', value: 'cpp' },
                     { name: 'HTML/CSS', value: 'html' }
                 )
-        ),
+        )
+        .setContexts([
+            InteractionContextType.Guild, 
+            InteractionContextType.BotDM, 
+            InteractionContextType.PrivateChannel
+        ]),
     async execute(interaction) {
         const language = interaction.options.getString("language") || "luau"
         let final = ''

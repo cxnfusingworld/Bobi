@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require('discord.js')
+const { SlashCommandBuilder, InteractionContextType } = require('discord.js')
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -11,7 +11,12 @@ module.exports = {
         .addNumberOption(option =>
             option.setName('maximum')
                 .setDescription('maximum value')
-        ),
+        )
+        .setContexts([
+            InteractionContextType.Guild, 
+            InteractionContextType.BotDM, 
+            InteractionContextType.PrivateChannel
+        ]),
     async execute(interaction) {
         
         let min = interaction.options.getNumber('minimum') ?? 0

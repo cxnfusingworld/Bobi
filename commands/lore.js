@@ -1,10 +1,15 @@
-const { SlashCommandBuilder } = require('discord.js')
+const { SlashCommandBuilder, InteractionContextType } = require('discord.js')
 
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('lore')
-        .setDescription('gives you bobi\'s lore'),
+        .setDescription('gives you bobi\'s lore')
+        .setContexts([
+            InteractionContextType.Guild, 
+            InteractionContextType.BotDM, 
+            InteractionContextType.PrivateChannel
+        ]),
     async execute(interaction) {
         
         const targetCommand = interaction.client.application.commands.cache.find(cmd => cmd.name === 'selfie')
