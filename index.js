@@ -100,8 +100,6 @@ async function onInteraction(interaction) {
 }
 
 async function onMessageSent(message) {
-
-    console.log(message.content)
     
     for (const event of messageSentEvents) {
         event(message)
