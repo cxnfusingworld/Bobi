@@ -12,7 +12,7 @@ module.exports = {
     async execute(interaction) {
         
         const { resource } = await interaction.reply({ 
-            content: 'Pinging...', 
+            content: 'calculating ball velocity...', 
             withResponse: true,
             ephemeral: true,
         });
@@ -24,8 +24,11 @@ module.exports = {
 
         await interaction.editReply(
             `🏓 pong!
-• **roundtrip latency:** \`${roundtripLatency}ms\`
-• **websocket ping:** \`${websocketPingDisplay}\``
+-# why are you playing ping pong with a cat..?
+\`\`\`ansi
+[32mroundtrip latency:[39m \`${roundtripLatency}ms\`
+[32mwebsocket ping:[39m    \`${websocketPingDisplay}\`
+\`\`\``
         );
         
     },
