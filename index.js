@@ -141,12 +141,13 @@ client.on('interactionCreate', onInteraction)
 client.on('messageCreate', onMessageSent)
 
 client.once('ready', async () => {
+
     log(`Logged in as ${client.user.tag}!`)
    
-    console.log(`Checking whitelisted servers...`)
-    for (const [id, guild] of client.guilds.cache) {
-        await checkGuildAccess(guild)
-    }
+    log(`Checking whitelisted servers...`)
+    for (const [id, guild] of client.guilds.cache) await checkGuildAccess(guild)
+    log(`All servers checked!`)
+
 })
 
 // Login

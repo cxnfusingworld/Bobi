@@ -58,7 +58,7 @@ module.exports = {
             const allMemberCount = guild.memberCount
 
             const icon = guild.iconURL({ dynamic: true, size: 256 })
-            const thumbnail = guild.bannerURL({ dynamic: true })
+            const banner = guild.bannerURL({ dynamic: true })
             
             const creationDate = Math.floor(guild.createdAt/1000)
             
@@ -112,7 +112,7 @@ module.exports = {
 
             let componentRow = null
 
-            if (icon || thumbnail) {
+            if (icon || banner) {
 
                 let buttons = []
 
@@ -123,9 +123,9 @@ module.exports = {
                         .setStyle(ButtonStyle.Primary)
                     buttons.push(viewIconButton)
                 }
-                if (thumbnail) {
+                if (banner) {
                     const viewThumbButton = new ButtonBuilder()
-                        .setCustomId('view-thumbnail')
+                        .setCustomId('view-banner')
                         .setLabel('View Banner')
                         .setStyle(ButtonStyle.Primary)
                     buttons.push(viewThumbButton)
@@ -156,11 +156,11 @@ module.exports = {
                     .setColor(embedColor)
 
                 if (buttonInteraction.customId === 'view-icon') {
-                    imageEmbed.setTitle(`${name}'s Server Icon`).setImage(icon)
+                    imageEmbed.setTitle(`${name} | Server Icon`).setImage(icon)
                 } 
                 
-                else if (buttonInteraction.customId === 'view-thumbnail') {
-                    imageEmbed.setTitle(`${name}'s Server Banner`).setImage(thumbnail)
+                else if (buttonInteraction.customId === 'view-banner') {
+                    imageEmbed.setTitle(`${name} | Server Banner`).setImage(banner)
                 }
 
                 await buttonInteraction.editReply({
@@ -176,7 +176,7 @@ module.exports = {
                     const disabledRow = new ActionRowBuilder().addComponents(disabledButtons)
                     
                     if (icon) mainEmbed.setThumbnail(icon)
-                    if (thumbnail) mainEmbed.setImage(thumbnail)
+                    if (banner) mainEmbed.setImage(banner)
                     
                     await interaction.editReply({
                         embeds: embeds,
