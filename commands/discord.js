@@ -150,7 +150,7 @@ module.exports = {
             })
 
             collector.on('collect', async buttonInteraction => {
-                await buttonInteraction.deferReply({ ephemeral: true })
+                // await buttonInteraction.deferReply({ ephemeral: true })
 
                 const imageEmbed = new EmbedBuilder()
                     .setColor(embedColor)
@@ -163,8 +163,9 @@ module.exports = {
                     imageEmbed.setTitle(`${name} | Server Banner`).setImage(banner)
                 }
 
-                await buttonInteraction.editReply({
-                    embeds: [imageEmbed]
+                await buttonInteraction.reply({
+                    embeds: [imageEmbed],
+                    ephemeral: true,
                 })
             })
 
