@@ -1,4 +1,5 @@
-const { SlashCommandBuilder, EmbedBuilder, InteractionContextType, ChannelType } = require('discord.js')
+const { SlashCommandBuilder, EmbedBuilder, InteractionContextType, ChannelType } = require('discord.js');
+const { parse } = require('dotenv');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -36,33 +37,52 @@ module.exports = {
 
             const name = guild.name
             const desc = guild.description || "*no description 💔*"
+            
+            const owner = guild.ownerId
+            const memberCount = guild.memberCount
 
             const icon = guild.iconURL({ dynamic: true, size: 256 })
-            const memberCount = guild.memberCount
+            const thumbnail = guild.bannerURL({ dynamic: true })
             
             const creationDate = guild.createdAt
             
             const channels = await guild.channels.fetch()
             const textChannels = channels.filter(c => ChannelType.GuildText).size
             const voiceChannels = channels.filter(c => ChannelType.GuildVoice).size
+            const forumChannels = channels.filter(c => ChannelType.GuildForum).size
+
+            // Embed
 
             const newEmbed = new EmbedBuilder()
                 .setColor('#7289da')
                 .setTitle(name)
                 .setDescription(desc)
                 .addFields([
+                    // Members
+                    { name: 'Owner', value: `<@${owner}>`, inline: true },
                     { name: 'Member Count', value: `${memberCount}`, inline: true },
+
+                    { name: '\u200B', value: '\u200B', inline: false },
+
+                    // Channels
                     { name: 'Text Channels', value: `${textChannels}`, inline: true },
                     { name: 'Voice Channels', value: `${voiceChannels}`, inline: true },
-                    { name: 'Created At', value: `<t:${Math.floor(creationDate / 1000)}:R>`, inline: true },
+                    { name: 'Forum Channels', value: `${forumChannels}`, inline: true },
+
+                    { name: '\u200B', value: '\u200B', inline: false },
+
+                    // Dates
+                    { name: 'Created', value: `<t:${Math.floor(creationDate / 1000)}:R>`, inline: true },
                 ])
                 .setTimestamp()
 
-            if (icon) {
-                newEmbed.setThumbnail(icon)
-            }
+            if (icon) newEmbed.setThumbnail(icon)
+            if (thumbnail) newEmbed.setImage(thumbnail)
 
-            await interaction.editReply({ embeds: [newEmbed] })
+            await interaction.editReply({ 
+                embeds: [newEmbed], 
+                allowedMentions: { parse: [] } 
+            })
         }
     },
 }
