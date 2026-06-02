@@ -49,10 +49,10 @@ module.exports = {
             const id = guild.id 
             const owner = guild.ownerId
 
-            const allMembers = await interaction.guild.members.fetch()
-            const allMemberCount = allMembers.size
-            const memberCount = allMembers.filter(member => !member.user.bot).size
-            const botCount = allMembers.filter(member => member.user.bot).size
+            const botCount = guild.members.cache.filter(member => member.user.bot).size
+
+            const memberCount = guild.memberCount - botCount
+            const allMemberCount = guild.memberCount
 
             const icon = guild.iconURL({ dynamic: true, size: 256 })
             const thumbnail = guild.bannerURL({ dynamic: true })
@@ -171,13 +171,9 @@ module.exports = {
                         ButtonBuilder.from(button).setDisabled(true).setStyle(ButtonStyle.Secondary)
                     )
                     const disabledRow = new ActionRowBuilder().addComponents(disabledButtons)
-
-                    embeds = []
                     
                     if (icon) mainEmbed.setThumbnail(icon)
                     if (thumbnail) mainEmbed.setImage(thumbnail)
-
-                    embeds.push(mainEmbed, membersEmbed, channelsEmbed, datesEmbed)
                     
                     await interaction.editReply({
                         embeds: embeds,
@@ -185,7 +181,7 @@ module.exports = {
                         components: [disabledRow]
                     })
                 } catch (e) {}
-                
+
             })
         }
     },
