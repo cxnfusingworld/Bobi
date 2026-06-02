@@ -24,11 +24,9 @@ module.exports = {
     async execute(interaction) {
         let allowedToUse = false
 
-        if (interaction.member && interaction.member.permissions && interaction.member.permissions.has(PermissionsBitField.Flags.Administrator)) {
-            allowedToUse = true
-        }
-        
         if (!interaction.guild) {
+            allowedToUse = true
+        } else if (interaction.member.permissions.has != null && interaction.member.permissions.has(PermissionsBitField.Flags.Administrator)) {
             allowedToUse = true
         }
         
