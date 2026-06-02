@@ -37,7 +37,7 @@ module.exports = {
             const allowedRoles = ['1455795090927780014'] 
             let allowedToUse = false
 
-            if (interaction.member && interaction.member.permissions.has(PermissionsBitField.Flags.Administrator)) {
+            if (interaction.member && interaction.member.permissions && interaction.member.permissions.has(PermissionsBitField.Flags.Administrator)) {
                 allowedToUse = true
             }
 
