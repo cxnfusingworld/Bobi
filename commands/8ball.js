@@ -58,7 +58,7 @@ module.exports = {
         const randomAnswer = getWeightedAnswer()
 
         await interaction.editReply({
-            content: randomAnswer
+            content: `u asked: ${question}\nmy answer: ${randomAnswer}`
         })
     }
 }
