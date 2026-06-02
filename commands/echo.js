@@ -42,7 +42,7 @@ module.exports = {
         const message = interaction.options.getString('message') || "🤔"
         const targetChannel = interaction.options.getChannel('channel') || interaction.channel
 
-        if (interaction.guild && targetChannel.id !== interaction.channel.id) {
+        if (interaction.guild && targetChannel.id) {
             try {
                 await targetChannel.send(message)
                 return await interaction.reply({
