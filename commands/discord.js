@@ -47,40 +47,43 @@ module.exports = {
             const creationDate = guild.createdAt
             
             const channels = await guild.channels.fetch()
-            const textChannels = channels.filter(c => ChannelType.GuildText).size
-            const voiceChannels = channels.filter(c => ChannelType.GuildVoice).size
-            const forumChannels = channels.filter(c => ChannelType.GuildForum).size
+            const textChannels = channels.filter(c => c.type === ChannelType.GuildText).size
+            const voiceChannels = channels.filter(c => c.type === ChannelType.GuildVoice).size
+            const forumChannels = channels.filter(c => c.type === ChannelType.GuildForum).size
+            
+            // Embeds
 
-            // Embed
-
-            const newEmbed = new EmbedBuilder()
+            let embeds = []
+            const mainEmbed = new EmbedBuilder()
                 .setColor('#7289da')
                 .setTitle(name)
                 .setDescription(desc)
+            const membersEmbed = new EmbedBuilder()
+                .setColor('#7289da')
                 .addFields([
-                    // Members
                     { name: 'Owner', value: `<@${owner}>`, inline: true },
                     { name: 'Member Count', value: `${memberCount}`, inline: true },
-
-                    { name: '\u200B', value: '\u200B', inline: false },
-
-                    // Channels
+                ])
+            const channelsEmbed = new EmbedBuilder()
+                .setColor('#7289da')
+                .addFields([
                     { name: 'Text Channels', value: `${textChannels}`, inline: true },
                     { name: 'Voice Channels', value: `${voiceChannels}`, inline: true },
                     { name: 'Forum Channels', value: `${forumChannels}`, inline: true },
-
-                    { name: '\u200B', value: '\u200B', inline: false },
-
-                    // Dates
+                ])
+            const datesEmbed = new EmbedBuilder()
+                .setColor('#7289da')
+                .addFields([
                     { name: 'Created', value: `<t:${Math.floor(creationDate / 1000)}:R>`, inline: true },
                 ])
-                .setTimestamp()
 
-            if (icon) newEmbed.setThumbnail(icon)
-            if (thumbnail) newEmbed.setImage(thumbnail)
+            embeds.push(mainEmbed, membersEmbed, channelsEmbed, datesEmbed)
+
+            if (icon) mainEmbed.setThumbnail(icon)
+            if (thumbnail) mainEmbed.setImage(thumbnail)
 
             await interaction.editReply({ 
-                embeds: [newEmbed], 
+                embeds: embeds,
                 allowedMentions: { parse: [] } 
             })
         }
