@@ -8,7 +8,10 @@ const {
     ButtonStyle,
 } = require('discord.js')
 
-const embedColor = '#7289da'
+const mainColor = '#7289da'
+const membersColor = '#5067b8'
+const channelsColor = '#34478e'
+const datesColor = '#203069'
 const widthStretcher = "**\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003**"
 
 module.exports = {
@@ -69,7 +72,7 @@ module.exports = {
 
             let embeds = []
             const mainEmbed = new EmbedBuilder()
-                .setColor(embedColor)
+                .setColor(mainColor)
                 .setTitle(name)
                 .setDescription(widthStretcher)
                 .addFields([
@@ -77,7 +80,7 @@ module.exports = {
                     { name: 'Owner', value: `<@${owner}>`, inline: true },
                 ])
             const membersEmbed = new EmbedBuilder()
-                .setColor(embedColor)
+                .setColor(membersColor)
                 .setTitle('Members')
                 .setDescription(widthStretcher)
                 .addFields([
@@ -86,7 +89,7 @@ module.exports = {
                     { name: 'Bot Count', value: `${botCount}`, inline: true },
                 ])
             const channelsEmbed = new EmbedBuilder()
-                .setColor(embedColor)
+                .setColor(channelsColor)
                 .setTitle('Channels')
                 .setDescription(widthStretcher)
                 .addFields([
@@ -96,7 +99,7 @@ module.exports = {
                     { name: 'Forum Channels', value: `${forumChannels}`, inline: true },
                 ])
             const datesEmbed = new EmbedBuilder()
-                .setColor(embedColor)
+                .setColor(datesColor)
                 .setTitle('Dates')
                 .setDescription(widthStretcher)
                 .addFields([
