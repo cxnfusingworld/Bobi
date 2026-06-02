@@ -23,12 +23,19 @@ module.exports = {
             InteractionContextType.BotDM, 
             InteractionContextType.PrivateChannel
         ]),
-        
+
     async execute(interaction) {
         await interaction.deferReply()
 
         const catPicture = await getPicture()
-        const attachment = new AttachmentBuilder(catPicture)
+        
+        if (!catPicture) {
+            return await interaction.editReply({ 
+                content: "oops i lost the photos try again in a bit 😭😭" 
+            })
+        }
+
+        const attachment = new AttachmentBuilder(catPicture, { name: 'cat.png' })
 
         await interaction.editReply({
             files: [attachment]
