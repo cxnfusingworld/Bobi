@@ -14,10 +14,24 @@ async function getPicture() {
     }
 }
 
+async function getAttachment(index) {    
+    const catPicture = await getPicture()
+    if (!catPicture) return null
+
+    const fileName = (index !== undefined) ? `cat_${index + 1}.png` : 'cat.png'
+    const attachment = new AttachmentBuilder(catPicture, { name: fileName })
+    
+    return attachment
+}
+
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('cat-picture')
         .setDescription('gives u a random cat picture')
+        .addNumberOption(option => 
+            option.setName("amount")
+            .setDescription("amount of cat pics to send, max 5")
+        )
         .setContexts([
             InteractionContextType.Guild, 
             InteractionContextType.BotDM, 
@@ -27,18 +41,26 @@ module.exports = {
     async execute(interaction) {
         await interaction.deferReply()
 
-        const catPicture = await getPicture()
+        let amount = interaction.options.getNumber("amount") || 1
+        amount = Math.min(Math.max(amount, 1), 5)
+
+        let attachments = []
+
+        for (let i = 0; i < amount; i++) {
+            const newAttachment = await getAttachment(i)
+            if (newAttachment) {
+                attachments.push(newAttachment)
+            }
+        }
         
-        if (!catPicture) {
+        if (attachments.length == 0) {
             return await interaction.editReply({ 
-                content: "oops i lost the photos try again in a bit 😭😭" 
+                content: "oops i lost the photos, try again in a bit 😭😭" 
             })
         }
 
-        const attachment = new AttachmentBuilder(catPicture, { name: 'cat.png' })
-
         await interaction.editReply({
-            files: [attachment]
+            files: attachments
         })
     },
 }
