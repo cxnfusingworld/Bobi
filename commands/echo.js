@@ -1,14 +1,19 @@
-// FIXED: Added PermissionsBitField to the import list
-const { SlashCommandBuilder, InteractionContextType, PermissionsBitField } = require('discord.js')
+const { SlashCommandBuilder, InteractionContextType, PermissionsBitField, ChannelType } = require('discord.js')
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('echo')
-        .setDescription('says the same thing u say')
+        .setDescription('makes the bot say smth in a specific channel')
         .addStringOption(option => 
             option.setName("message")
                 .setDescription("the message to say")
                 .setRequired(true)
+        )
+        // Added the channel picker option
+        .addChannelOption(option =>
+            option.setName("channel")
+                .setDescription("where to send the message (defaults to here)")
+                .addChannelTypes(ChannelType.GuildText) 
         )
         .setContexts([
             InteractionContextType.Guild, 
@@ -34,10 +39,25 @@ module.exports = {
             })
         }
 
-        await interaction.deferReply()
-
         const message = interaction.options.getString('message') || "🤔"
+        const targetChannel = interaction.options.getChannel('channel') || interaction.channel
 
+        if (interaction.guild && targetChannel.id !== interaction.channel.id) {
+            try {
+                await targetChannel.send(message)
+                return await interaction.reply({
+                    content: `sure i sent that to <#${targetChannel.id}>`,
+                    ephemeral: true
+                })
+            } catch (error) {
+                return await interaction.reply({
+                    content: `i cant talk in <#${targetChannel.id}> 😔💔`,
+                    ephemeral: true
+                })
+            }
+        }
+
+        await interaction.deferReply()
         await interaction.editReply({
             content: message
         })
