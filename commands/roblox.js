@@ -1,6 +1,20 @@
 const { SlashCommandBuilder, EmbedBuilder, InteractionContextType } = require('discord.js')
 
 /// EXPERIENCE HELPERS \\\
+
+async function getUniverseIdFromPlace(placeId) {
+    try {
+        const response = await fetch(`https://apis.roblox.com/universes/v1/places/${placeId}/universe`)
+        if (!response.ok) return null
+        
+        const data = await response.json()
+        return data.universeId // Gives us the clean back-end ID we need!
+    } catch (error) {
+        console.warn("Roblox API [Place -> Universe] Failed:", error)
+        return null
+    }
+}
+
 async function getGameDetails(universeId) {
     try {
         const response = await fetch(`https://games.roblox.com/v1/games?universeIds=${universeId}`)
@@ -63,10 +77,10 @@ module.exports = {
         .addSubcommand(subcommand =>
             subcommand
                 .setName('experience')
-                .setDescription('grabs info about a roblox experience')
+                .setDescription('gets info about a roblox game')
                 .addStringOption(option =>
-                    option.setName('universe-id')
-                        .setDescription('the Universe ID of the roblox game')
+                    option.setName('place-id')
+                        .setDescription('the place id of the roblox game')
                         .setRequired(true)
                 )
         ),
@@ -129,7 +143,9 @@ module.exports = {
         // EXPERIENCE SUBCOMMAND
         // -------------------------------
         if (sub === 'experience') {
-            const universeId = interaction.options.getString('universe-id')
+
+            const placeId = interaction.options.getString('place-id')
+            const universeId = await getUniverseIdFromPlace(placeId)
 
             const [details, iconUrl, thumbnailUrl] = await Promise.all([
                 getGameDetails(universeId),
