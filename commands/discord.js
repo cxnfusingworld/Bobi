@@ -1,5 +1,6 @@
-const { SlashCommandBuilder, EmbedBuilder, InteractionContextType, ChannelType } = require('discord.js');
-const { parse } = require('dotenv');
+const { SlashCommandBuilder, EmbedBuilder, InteractionContextType, ChannelType } = require('discord.js')
+
+const widthStretcher = "**\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003**";
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -44,37 +45,42 @@ module.exports = {
             const icon = guild.iconURL({ dynamic: true, size: 256 })
             const thumbnail = guild.bannerURL({ dynamic: true })
             
-            const creationDate = guild.createdAt
+            const creationDate = Math.floor(guild.createdAt/1000)
             
             const channels = await guild.channels.fetch()
+            const totalChannels = channels.size
             const textChannels = channels.filter(c => c.type === ChannelType.GuildText).size
             const voiceChannels = channels.filter(c => c.type === ChannelType.GuildVoice).size
             const forumChannels = channels.filter(c => c.type === ChannelType.GuildForum).size
-            
+
             // Embeds
 
             let embeds = []
             const mainEmbed = new EmbedBuilder()
                 .setColor('#7289da')
                 .setTitle(name)
-                .setDescription(desc)
+                .setDescription(`${desc}\n${widthStretcher}`)
             const membersEmbed = new EmbedBuilder()
                 .setColor('#7289da')
+                .setDescription(widthStretcher)
                 .addFields([
                     { name: 'Owner', value: `<@${owner}>`, inline: true },
                     { name: 'Member Count', value: `${memberCount}`, inline: true },
                 ])
             const channelsEmbed = new EmbedBuilder()
                 .setColor('#7289da')
+                .setDescription(widthStretcher)
                 .addFields([
+                    { name: 'All Channels', value: `${totalChannels}`, inline: true },
                     { name: 'Text Channels', value: `${textChannels}`, inline: true },
                     { name: 'Voice Channels', value: `${voiceChannels}`, inline: true },
                     { name: 'Forum Channels', value: `${forumChannels}`, inline: true },
                 ])
             const datesEmbed = new EmbedBuilder()
                 .setColor('#7289da')
+                .setDescription(widthStretcher)
                 .addFields([
-                    { name: 'Created', value: `<t:${Math.floor(creationDate / 1000)}:R>`, inline: true },
+                    { name: 'Created', value: `<t:${creationDate}:f> (<t:${creationDate}:R>)`, inline: true },
                 ])
 
             embeds.push(mainEmbed, membersEmbed, channelsEmbed, datesEmbed)
