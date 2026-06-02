@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder, PermissionsBitField, InteractionContextType } = require('discord.js')
+const { SlashCommandBuilder, EmbedBuilder, InteractionContextType, ChannelType } = require('discord.js')
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -35,23 +35,20 @@ module.exports = {
             const guild = interaction.guild
 
             const name = guild.name
-            const desc = guild.description
+            const desc = guild.description || "*no description 💔*"
 
-            const icon = guild.iconURL
+            const icon = guild.iconURL({ dynamic: true, size: 256 })
             const memberCount = guild.memberCount
             
             const creationDate = guild.createdAt
             
-            const textChannels = guild.channels.cache.filter(c => c.type === 0).size
-            const voiceChannels = guild.channels.cache.filter(c => c.type === 2).size
+            const channels = await guild.channels.fetch()
+            const textChannels = channels.filter(c => ChannelType.GuildText).size
+            const voiceChannels = channels.filter(c => ChannelType.GuildVoice).size
 
             const newEmbed = new EmbedBuilder()
                 .setColor('#7289da')
-                .setAuthor({ 
-                    name: `Server Info`, 
-                    iconURL: icon,
-                })
-                .setTitle(`${name}`)
+                .setTitle(name)
                 .setDescription(desc)
                 .addFields([
                     { name: 'Member Count', value: `${memberCount}`, inline: true },
@@ -60,6 +57,10 @@ module.exports = {
                     { name: 'Created At', value: `<t:${Math.floor(creationDate / 1000)}:R>`, inline: true },
                 ])
                 .setTimestamp()
+
+            if (icon) {
+                newEmbed.setThumbnail(icon)
+            }
 
             await interaction.editReply({ embeds: [newEmbed] })
         }
