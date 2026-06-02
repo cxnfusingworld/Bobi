@@ -45,11 +45,14 @@ module.exports = {
 
             const guild = interaction.guild
 
-            const name = guild.name
-            const desc = guild.description || "*no description 💔*"
-            
+            const name = guild.name           
+            const id = guild.id 
             const owner = guild.ownerId
-            const memberCount = guild.memberCount
+
+            const allMembers = await interaction.guild.members.fetch()
+            const allMemberCount = allMembers.size
+            const memberCount = allMembers.filter(member => !member.user.bot).size
+            const botCount = allMembers.filter(member => member.user.bot).size
 
             const icon = guild.iconURL({ dynamic: true, size: 256 })
             const thumbnail = guild.bannerURL({ dynamic: true })
@@ -68,14 +71,19 @@ module.exports = {
             const mainEmbed = new EmbedBuilder()
                 .setColor(embedColor)
                 .setTitle(name)
-                .setDescription(`${desc}\n${widthStretcher}`)
+                .setDescription(widthStretcher)
+                .addFields([
+                    { name: 'Server ID', value: id, inline: true },
+                    { name: 'Owner', value: `<@${owner}>`, inline: true },
+                ])
             const membersEmbed = new EmbedBuilder()
                 .setColor(embedColor)
                 .setTitle('Members')
                 .setDescription(widthStretcher)
                 .addFields([
-                    { name: 'Owner', value: `<@${owner}>`, inline: true },
+                    { name: 'Total Member Count', value: `${allMemberCount}`, inline: true },
                     { name: 'Member Count', value: `${memberCount}`, inline: true },
+                    { name: 'Bot Count', value: `${botCount}`, inline: true },
                 ])
             const channelsEmbed = new EmbedBuilder()
                 .setColor(embedColor)
@@ -96,6 +104,8 @@ module.exports = {
                 ])
 
             embeds.push(mainEmbed, membersEmbed, channelsEmbed, datesEmbed)
+
+            // Buttons
 
             let componentRow = null
 
@@ -118,8 +128,7 @@ module.exports = {
                     buttons.push(viewThumbButton)
                 }
 
-                componentRow = new ActionRowBuilder()
-                    .addComponents(buttons)
+                componentRow = new ActionRowBuilder().addComponents(buttons)
                 
             }
 
@@ -130,6 +139,8 @@ module.exports = {
             })
 
             if (!componentRow) return
+
+            // Button Interactions
 
             const collector = responseMessage.createMessageComponentCollector({ 
                 time: 300000 
@@ -157,14 +168,14 @@ module.exports = {
             collector.on('end', async () => {
                 try {
                     const disabledButtons = componentRow.components.map(button => 
-                        ButtonBuilder.from(button).setDisabled(true)
+                        ButtonBuilder.from(button).setDisabled(true).setStyle(ButtonStyle.Secondary)
                     )
                     const disabledRow = new ActionRowBuilder().addComponents(disabledButtons)
 
                     embeds = []
                     
-                    if (icon) mainEmbed.icon = icon
-                    if (thumbnail) mainEmbed.thumbnail = thumbnail
+                    if (icon) mainEmbed.setThumbnail(icon)
+                    if (thumbnail) mainEmbed.setImage(thumbnail)
 
                     embeds.push(mainEmbed, membersEmbed, channelsEmbed, datesEmbed)
                     
@@ -174,6 +185,7 @@ module.exports = {
                         components: [disabledRow]
                     })
                 } catch (e) {}
+                
             })
         }
     },
