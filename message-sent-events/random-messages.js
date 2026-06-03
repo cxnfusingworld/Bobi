@@ -11,20 +11,20 @@ const randomMessages = [
     { text: ".-.. -- .- --- / .. / .-- .- ... - . -.. / ..- .-. / - .. -- .", weight: 4, deleteAfter: true },
 
 ]
-const messageChance = 0.5
+const messageChance = 0.3
 
 function getWeightedAnswer() {
-    const totalWeight = randomAnswers.reduce((sum, answer) => sum + answer.weight, 0)
+    const totalWeight = randomMessages.reduce((sum, answer) => sum + answer.weight, 0)
     let random = Math.random() * totalWeight
     
-    for (const answer of randomAnswers) {
+    for (const answer of randomMessages) {
         random -= answer.weight
         if (random <= 0) {
             return answer
         }
     }
     
-    return randomAnswers[0]
+    return randomMessages[0]
 }
 
 module.exports = async function (userMessage) {
