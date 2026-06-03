@@ -12,6 +12,9 @@ const randomMessages = [
 
 ]
 const messageChance = 0.1
+const COOLDOWN_TIME = 10000
+
+const activeCooldowns = new Set()
 
 function getWeightedAnswer() {
     const totalWeight = randomMessages.reduce((sum, answer) => sum + answer.weight, 0)
@@ -29,9 +32,12 @@ function getWeightedAnswer() {
 
 module.exports = async function (userMessage) {
     if (userMessage.author.bot) return
+    if (activeCooldowns.has(userMessage.author.id)) return
     
     const rand = Math.random()
     if (rand<messageChance) {
+
+        activeCooldowns.add(userMessage.author.id)
 
         const chosen = getWeightedAnswer()
         const text = chosen.text
@@ -44,6 +50,10 @@ module.exports = async function (userMessage) {
                 await secretMessage.delete().catch(() => {})
             }, 500)
         }
+
+        setTimeout(() => {
+            activeCooldowns.delete(userMessage.author.id)
+        }, COOLDOWN_TIME)
 
     }
 
