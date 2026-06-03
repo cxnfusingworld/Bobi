@@ -12,6 +12,7 @@ const mainColor = '#7289da'
 const membersColor = '#5067b8'
 const channelsColor = '#34478e'
 const datesColor = '#203069'
+const imageColor = '#111d4c'
 const widthStretcher = "**\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003**"
 
 module.exports = {
@@ -152,18 +153,14 @@ module.exports = {
             collector.on('collect', async buttonInteraction => {
                 // await buttonInteraction.deferReply({ ephemeral: true })
 
-                console.log("brooo i pressed it")
-
                 const imageEmbed = new EmbedBuilder()
-                    .setColor(embedColor)
+                    .setColor(imageColor)
 
                 if (buttonInteraction.customId === 'view-icon') {
                     imageEmbed.setTitle(`${name} | Server Icon`).setImage(icon)
                 } else if (buttonInteraction.customId === 'view-banner') {
                     imageEmbed.setTitle(`${name} | Server Banner`).setImage(banner)
                 }
-
-                console.log("replying rn")
 
                 await buttonInteraction.reply({
                     embeds: [imageEmbed],
