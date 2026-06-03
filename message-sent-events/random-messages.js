@@ -11,7 +11,7 @@ const randomMessages = [
     { text: ".-.. -- .- --- / .. / .-- .- ... - . -.. / ..- .-. / - .. -- .", weight: 4, deleteAfter: true },
 
 ]
-const messageChance = 0.03
+const messageChance = 0.5
 
 function getWeightedAnswer() {
     const totalWeight = randomAnswers.reduce((sum, answer) => sum + answer.weight, 0)
