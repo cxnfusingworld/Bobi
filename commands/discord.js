@@ -152,16 +152,18 @@ module.exports = {
             collector.on('collect', async buttonInteraction => {
                 // await buttonInteraction.deferReply({ ephemeral: true })
 
+                console.log("brooo i pressed it")
+
                 const imageEmbed = new EmbedBuilder()
                     .setColor(embedColor)
 
                 if (buttonInteraction.customId === 'view-icon') {
                     imageEmbed.setTitle(`${name} | Server Icon`).setImage(icon)
-                } 
-                
-                else if (buttonInteraction.customId === 'view-banner') {
+                } else if (buttonInteraction.customId === 'view-banner') {
                     imageEmbed.setTitle(`${name} | Server Banner`).setImage(banner)
                 }
+
+                console.log("replying rn")
 
                 await buttonInteraction.reply({
                     embeds: [imageEmbed],
