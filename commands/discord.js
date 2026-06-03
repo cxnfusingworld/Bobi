@@ -8,11 +8,13 @@ const {
     ButtonStyle,
 } = require('discord.js')
 
+// Colors
 const mainColor = '#7289da'
-const membersColor = '#5067b8'
-const channelsColor = '#34478e'
-const datesColor = '#203069'
-const imageColor = '#111d4c'
+const membersColor = '#4b62b3'
+const channelsColor = '#384b91'
+const datesColor = '#283977'
+const imageColor = '#7289da'
+
 const widthStretcher = "**\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003**"
 
 module.exports = {
