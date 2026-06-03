@@ -1,6 +1,5 @@
 const { SlashCommandBuilder, InteractionContextType } = require('discord.js')
 
-// 1. Define answers with weights. Higher weight = more common.
 const answers = [
     
     { text: "ofc vro", weight: 15 },
