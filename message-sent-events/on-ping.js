@@ -12,7 +12,7 @@ const messages = [
 const onSmiteMessages = [
     "ow",
     "*dies*",
-    "bro fuck you",
+    "bro f### you",
     "rude :(",
     "<:why:1513024914314104872>",
 ]
