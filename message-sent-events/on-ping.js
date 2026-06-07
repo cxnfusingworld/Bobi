@@ -23,23 +23,29 @@ function getMessage(from) {
     return chosenMessage
 }
 
-module.exports = async function (message) {
-    if (message.author.bot) return;
+async function checkSmite(message) {
+    if (message.content.find('https://tenor.com/view/worldbox-smited-lightning-gif-17816464421779196148')) {
+        let chosenMessage = getMessage(onSmiteMessages)
+        await message.reply(chosenMessage)
+        return true
+    }
+    return false
+}
 
-    const botId = message.client.user.id;
+module.exports = async function (message) {
+    if (message.author.bot) return
+
+    const botId = message.client.user.id
 
     if (message.mentions.has(botId)) {
         if (message.reference && message.mentions.repliedUser?.id === botId) {
             // On reply
-            const content = mentions.content
-            if (content.find('https://tenor.com/view/worldbox-smited-lightning-gif-17816464421779196148')) {
-                let chosenMessage = getMessage(onSmiteMessages)
-                message.reply(chosenMessage)
-            }
+            checkSmite(message)
         } else {
             // On ping
+            if (checkSmite(message)) return
             let chosenMessage = getMessage(messages)
-            return await message.reply(chosenMessage);
+            return await message.reply(chosenMessage)
         }
     }
 
