@@ -30,10 +30,10 @@ function getWeightedAnswer() {
     return randomMessages[0]
 }
 
-module.exports = async function (userMessage) {
+module.exports = async function (message) {
     if (!message.guild) return
-    if (userMessage.author.bot) return
-    if (activeCooldowns.has(userMessage.author.id)) return
+    if (message.author.bot) return
+    if (activeCooldowns.has(message.author.id)) return
     
     const settings = await getGuildSettings(message.guild.id)
     if (!settings.random_message_enabled) return
@@ -41,13 +41,13 @@ module.exports = async function (userMessage) {
     const rand = Math.random()
     if (rand<settings.random_message_chance) {
 
-        activeCooldowns.add(userMessage.author.id)
+        activeCooldowns.add(message.author.id)
 
         const chosen = getWeightedAnswer()
         const text = chosen.text
         const deleteAfter = chosen.deleteAfter
 
-        const secretMessage = await userMessage.channel.send(text)
+        const secretMessage = await message.channel.send(text)
 
         if (deleteAfter) {
             setTimeout(async () => {
@@ -56,7 +56,7 @@ module.exports = async function (userMessage) {
         }
 
         setTimeout(() => {
-            activeCooldowns.delete(userMessage.author.id)
+            activeCooldowns.delete(message.author.id)
         }, settings.random_message_cooldown)
 
     }
