@@ -1,5 +1,12 @@
 {
 
+    "developer_ids": ["950572259574157323"],
+    
+    "foul_language": {
+        "value": true,
+        "valueType": "boolean"
+    },
+
 
     "random_message_enabled": {
         "value": true,
@@ -37,13 +44,6 @@
 
 
     "message_reactions_enabled": {
-        "value": true,
-        "valueType": "boolean"
-    },
-
-
-    
-    "foul_language": {
         "value": true,
         "valueType": "boolean"
     }
