@@ -11,7 +11,7 @@ const randomMessages = [
     { text: ".-.. -- .- --- / .. / .-- .- ... - . -.. / ..- .-. / - .. -- .", weight: 4, deleteAfter: true },
 
 ]
-const messageChance = 0.1
+const messageChance = 0.05
 const COOLDOWN_TIME = 10000
 
 const activeCooldowns = new Set()
