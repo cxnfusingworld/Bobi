@@ -4,28 +4,27 @@ const configPath = path.join(__dirname, '../config.json')
 let config = require(configPath)
 
 const { SlashCommandBuilder, InteractionContextType, EmbedBuilder, PermissionFlagsBits } = require('discord.js')
-const GuildConfig = require('../models/GuildConfig.js') // Make sure this path points to your mongoose schema!
+const GuildConfig = require('../models/GuildConfig.js') 
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('config')
         .setDescription('bot config and stuff')
         .setContexts([InteractionContextType.Guild])
-        // Allow server managers/admins to see this command base
         .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
 
-        // 1. GET GLOBAL SUBCOMMAND
+        // GET GLOBAL SUBCOMMAND
         .addSubcommand(subcommand =>
             subcommand
                 .setName('get-global')
-                .setDescription('gives u the current global bot config (Devs Only)')
+                .setDescription('gives u the current global bot config (dev only)')
         )
 
-        // 2. SET GLOBAL SUBCOMMAND
+        // SET GLOBAL SUBCOMMAND
         .addSubcommand(subcommand =>
             subcommand
                 .setName('set-global')
-                .setDescription('updates a global config setting (Devs Only)')
+                .setDescription('updates a global config setting (dev only)')
                 .addStringOption(option => 
                     option.setName('setting')
                         .setDescription('the global setting you want to change')
@@ -46,36 +45,40 @@ module.exports = {
                 .setDescription('gives u the current server database config')
         )
 
-        // 4. SET SERVER SUBCOMMAND
+        // SET SERVER SUBCOMMAND
         .addSubcommand(subcommand =>
             subcommand
                 .setName('set-server')
-                .setDescription('updates a server specific database config')
+                .setDescription('updates a server specific config')
                 .addStringOption(option =>
                     option.setName('setting')
                         .setDescription('the server module you want to toggle')
+                        .setAutocomplete(true) 
                         .setRequired(true)
-                        .addChoices(
-                            { name: 'Random Messages Toggle', value: 'trollMessagesEnabled' },
-                            { name: 'Censorship Toggle', value: 'foulLanguageFilter' }
-                        )
                 )
                 .addBooleanOption(option =>
                     option.setName('enabled')
-                        .setDescription('Turn this feature True (On) or False (Off)')
+                        .setDescription('turn this feature True (On) or False (Off)')
                         .setRequired(true)
                 )
         ),
 
-    // AUTOCOMPLETE HANDLER (For global settings choices)
     async autocomplete(interaction) {
-        const focusedValue = interaction.options.getFocused().toLowerCase()
-        const settingsKeys = Object.keys(config).filter(key => key !== 'developer_ids')
-        const filtered = settingsKeys.filter(key => key.toLowerCase().includes(focusedValue))
+        const focusedOption = interaction.options.getFocused(true);
+        const focusedValue = focusedOption.value.toLowerCase();
+        
+        const sub = interaction.options.getSubcommand();
+        const settingsKeys = Object.keys(config).filter(key => {
+            if (key === 'developer_ids') return false;
+            if (sub === 'set-server' && config[key].valueType !== 'boolean') return false;
+            return true;
+        });
+
+        const filtered = settingsKeys.filter(key => key.toLowerCase().includes(focusedValue));
 
         await interaction.respond(
             filtered.slice(0, 25).map(key => ({ name: key.replace(/_/g, ' '), value: key }))
-        )
+        );
     },
 
     async execute(interaction) {
@@ -92,12 +95,12 @@ module.exports = {
         }
 
         // ==========================================
-        // SUBCOMMAND: get-global
+        // SUBCOMMAND: GET-GLOBAL
         // ==========================================
         if (sub === 'get-global') {
             const configEmbed = new EmbedBuilder()
-                .setTitle("Global Configuration")
-                .setDescription("bot defaults and stuff")
+                .setTitle("⚙️ Bobi Global Configuration")
+                .setDescription("default global settings")
                 .setColor("Blurple")
                 .setTimestamp()
 
@@ -117,14 +120,14 @@ module.exports = {
         }
 
         // ==========================================
-        // SUBCOMMAND: set-global
+        // SUBCOMMAND: SET-GLOBAL
         // ==========================================
         if (sub === 'set-global') {
             const settingKey = interaction.options.getString('setting')
             let rawValue = interaction.options.getString('value')
 
             if (!config[settingKey]) {
-                return await interaction.reply({ content: `❌ Global setting \`${settingKey}\` doesn't exist!`, ephemeral: true })
+                return await interaction.reply({ content: `global setting \`${settingKey}\` doesn't exist :(`, ephemeral: true })
             }
 
             const targetSetting = config[settingKey]
@@ -132,10 +135,10 @@ module.exports = {
             if (targetSetting.valueType === 'boolean') {
                 if (rawValue.toLowerCase() === 'true') rawValue = true
                 else if (rawValue.toLowerCase() === 'false') rawValue = false
-                else return await interaction.reply({ content: `❌ This setting requires a boolean (\`true\` or \`false\`).`, ephemeral: true })
+                else return await interaction.reply({ content: `this setting requires a boolean (\`true\` or \`false\`)`, ephemeral: true })
             } else if (targetSetting.valueType === 'number') {
                 const parsedNum = Number(rawValue)
-                if (isNaN(parsedNum)) return await interaction.reply({ content: `❌ This setting requires a valid number.`, ephemeral: true })
+                if (isNaN(parsedNum)) return await interaction.reply({ content: `this setting requires a valid number`, ephemeral: true })
                 rawValue = parsedNum
             }
 
@@ -143,13 +146,13 @@ module.exports = {
             fs.writeFileSync(configPath, JSON.stringify(config, null, 4))
 
             return await interaction.reply({
-                content: `✅ Successfully set global variable \`${settingKey}\` to \`${rawValue}\`!`,
+                content: `successfully set global variable \`${settingKey}\` to \`${rawValue}\``,
                 ephemeral: true
             })
         }
 
         // ==========================================
-        // SUBCOMMAND: get-server
+        // SUBCOMMAND: GET-SERVER (MongoDB Auto-Load)
         // ==========================================
         if (sub === 'get-server') {
             await interaction.deferReply({ ephemeral: true })
@@ -161,33 +164,39 @@ module.exports = {
 
             const embed = new EmbedBuilder()
                 .setTitle(`⚙️ ${interaction.guild.name} Configuration`)
-                .setDescription("Local server configs pulled directly from Bobi's Cloud Database.")
+                .setDescription("server specific settings")
                 .setColor("Orange")
-                .addFields(
-                    { 
-                        name: "Chaotic Random Messages", 
-                        value: serverSettings.trollMessagesEnabled ? "🟢 Enabled" : "🔴 Disabled", 
-                        inline: true 
-                    },
-                    { 
-                        name: "Foul Language Censorship", 
-                        value: serverSettings.foulLanguageFilter ? "🟢 Active" : "🔴 Disabled", 
-                        inline: true 
-                    }
-                )
                 .setTimestamp()
+
+            for (const [key, data] of Object.entries(config)) {
+                if (key === 'developer_ids') continue;
+
+                const dbValue = serverSettings[key];
+
+                let displayValue = dbValue;
+                if (data.displayType === 'percent') displayValue = `${dbValue * 100}%`;
+                else if (data.displayType === 'ms') displayValue = `${dbValue / 1000}s`;
+                else if (data.valueType === 'boolean') displayValue = dbValue ? '🟢 Enabled' : '🔴 Disabled';
+
+                const cleanName = key.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+                embed.addFields({ name: cleanName, value: `\`${displayValue}\``, inline: true });
+            }
 
             return await interaction.editReply({ embeds: [embed] })
         }
 
         // ==========================================
-        // SUBCOMMAND: set-server
+        // SUBCOMMAND: SET-SERVER (MongoDB Auto-Save)
         // ==========================================
         if (sub === 'set-server') {
             await interaction.deferReply({ ephemeral: true })
 
             const settingKey = interaction.options.getString('setting')
             const targetValue = interaction.options.getBoolean('enabled')
+
+            if (!config[settingKey]) {
+                return await interaction.editReply({ content: `hmm that setting doesnt exist 🤔` })
+            }
 
             await GuildConfig.findOneAndUpdate(
                 { guildId: interaction.guild.id },
@@ -198,7 +207,7 @@ module.exports = {
             const cleanName = settingKey.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 
             return await interaction.editReply({
-                content: `updated server setting **${cleanName}** to \`${targetValue ? 'enabled' : 'disabled'}\`!`
+                content: `successfully updated server setting **${cleanName}** to \`${targetValue ? 'ENABLED' : 'DISABLED'}\``
             })
         }
     },

@@ -2,10 +2,13 @@
 
     "developer_ids": ["950572259574157323"],
     
+
+    
     "foul_language": {
         "value": true,
         "valueType": "boolean"
     },
+
 
 
     "random_message_enabled": {
