@@ -1,3 +1,5 @@
+const config = require('../config.json')
+
 const messages = [
     "what nowww??",
     "meow",
@@ -12,14 +14,19 @@ const messages = [
 const onSmiteMessages = [
     "ow",
     "*dies*",
-    "bro f### you",
+    "bro <fuck> you",
     "rude :(",
     "<:why:1513024914314104872>",
 ]
 
 function getMessage(from, message) {
     let chosenMessage = from[Math.floor(Math.random() * from.length)]
+
     chosenMessage = chosenMessage.replaceAll("<user>", `<@${message.author.id}>`)
+
+    chosenMessage = chosenMessage.replaceAll("<fuck>", config.foul_language ? 'fuck' : 'flip')
+    chosenMessage = chosenMessage.replaceAll("<shit>", config.foul_language ? 'shit' : 'stuff')
+
     return chosenMessage
 }
 
@@ -39,9 +46,11 @@ module.exports = async function (message) {
 
     if (message.mentions.has(botId)) {
         if (message.reference && message.mentions.repliedUser?.id === botId) {
+            if (!config.on_reply_actions) return
             // On reply
             await checkSmite(message)
         } else {
+            if (!config.on_ping_actions) return
             // On ping
             if (await checkSmite(message)) return
             

@@ -1,3 +1,5 @@
+const config = require('../config.json')
+
 const randomMessages = [
     
     { text: "do u guys have snacks?", weight: 100 },
@@ -11,8 +13,6 @@ const randomMessages = [
     { text: ".-.. -- .- --- / .. / .-- .- ... - . -.. / ..- .-. / - .. -- .", weight: 4, deleteAfter: true },
 
 ]
-const messageChance = 0.05
-const COOLDOWN_TIME = 10000
 
 const activeCooldowns = new Set()
 
@@ -31,11 +31,12 @@ function getWeightedAnswer() {
 }
 
 module.exports = async function (userMessage) {
+    if (!config.random_message_enabled) return
     if (userMessage.author.bot) return
     if (activeCooldowns.has(userMessage.author.id)) return
     
     const rand = Math.random()
-    if (rand<messageChance) {
+    if (rand<config.random_message_chance) {
 
         activeCooldowns.add(userMessage.author.id)
 
@@ -53,7 +54,7 @@ module.exports = async function (userMessage) {
 
         setTimeout(() => {
             activeCooldowns.delete(userMessage.author.id)
-        }, COOLDOWN_TIME)
+        }, config.random_message_cooldown)
 
     }
 

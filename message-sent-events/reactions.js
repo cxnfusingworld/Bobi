@@ -1,3 +1,5 @@
+const config = require('../config.json')
+
 const map = {
 
     ['treat']: '👀',
@@ -11,6 +13,7 @@ const map = {
 }
 
 module.exports = async function (message) {
+    if (!config.message_reactions_enabled) return
     
     for (const [key, value] of Object.entries(map)) {
         const messageContent = message.content.toLowerCase()

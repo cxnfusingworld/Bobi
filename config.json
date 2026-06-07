@@ -1,0 +1,52 @@
+{
+
+
+    "random_message_enabled": {
+        "value": true,
+        "valueType": "boolean"
+    },
+    "random_message_chance": {
+        "value": 0.03,
+        "valueType": "number",
+        "displayType": "percent"
+    },
+    "random_message_cooldown": {
+        "value": 10000,
+        "valueType": "number",
+        "displayType": "ms"
+    },
+
+
+
+    "on_ping_actions": {
+        "value": true,
+        "valueType": "boolean"
+    },
+    "on_reply_actions": {
+        "value": true,
+        "valueType": "boolean"
+    },
+
+
+
+    "corrections_enabled": {
+        "value": true,
+        "valueType": "boolean"
+    },
+
+
+
+    "message_reactions_enabled": {
+        "value": true,
+        "valueType": "boolean"
+    },
+
+
+    
+    "foul_language": {
+        "value": true,
+        "valueType": "boolean"
+    }
+
+
+}
