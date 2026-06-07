@@ -86,6 +86,19 @@ async function initMessageEvents() {
 }
 
 async function onInteraction(interaction) {
+    
+    if (interaction.isAutocomplete()) {
+        const command = commands[interaction.commandName]
+        if (command && command.autocomplete) {
+            try {
+                await command.autocomplete(interaction)
+            } catch (error) {
+                log(`Error running autocomplete for /${interaction.commandName}: ${error}`, "error")
+            }
+        }
+        return
+    }
+
     if (!interaction.isChatInputCommand()) return
 
     const command = commands[interaction.commandName]
