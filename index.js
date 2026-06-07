@@ -9,6 +9,7 @@ const mongoose = require('mongoose')
 
 const utilities = path.join(__dirname, 'utilities')
 const log = require(path.join(utilities, "logger.js"))
+const globalConfig = require(path.join(__dirname, 'config.json'))
 
 const client = new Client({
     intents: [
@@ -21,7 +22,7 @@ const client = new Client({
 const commands = {}
 const messageSentEvents = []
 
-const whitelistedServers = ['1510727709473509426', '1440792579351515188']
+const whitelistedServers = globalConfig.whitelisted_servers
 
 const dbConnection = `mongodb+srv://main_db_user:${process.env.MONGO_DB_PASSWORD}@bobi.86uky8t.mongodb.net/?appName=Bobi`
 
@@ -191,6 +192,7 @@ client.on('guildCreate', async (guild) => {
 
 /// Uptime System \\\
 const express = require('express')
+const { config } = require('dotenv')
 const app = express()
 const PORT = process.env.PORT || 3000
 
