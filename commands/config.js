@@ -38,7 +38,7 @@ module.exports = {
                 )
         )
 
-        // 3. GET SERVER SUBCOMMAND
+        // GET SERVER SUBCOMMAND
         .addSubcommand(subcommand =>
             subcommand
                 .setName('get-server')
@@ -52,13 +52,14 @@ module.exports = {
                 .setDescription('updates a server specific config')
                 .addStringOption(option =>
                     option.setName('setting')
-                        .setDescription('the server module you want to toggle')
+                        .setDescription('the server setting you want to change')
                         .setAutocomplete(true) 
                         .setRequired(true)
                 )
-                .addBooleanOption(option =>
-                    option.setName('enabled')
-                        .setDescription('turn this feature True (On) or False (Off)')
+                // FIXED: Changed to StringOption so it accepts any input and triggers autocomplete!
+                .addStringOption(option =>
+                    option.setName('value')
+                        .setDescription('the new value (booleans use true/false, percentages use 0.03 etc.)')
                         .setRequired(true)
                 )
         ),
@@ -67,13 +68,8 @@ module.exports = {
         const focusedOption = interaction.options.getFocused(true);
         const focusedValue = focusedOption.value.toLowerCase();
         
-        const sub = interaction.options.getSubcommand();
-        const settingsKeys = Object.keys(config).filter(key => {
-            if (key === 'developer_ids') return false;
-            if (sub === 'set-server' && config[key].valueType !== 'boolean') return false;
-            return true;
-        });
-
+        // FIXED: Removed the boolean restriction so server settings display numbers/percentages too
+        const settingsKeys = Object.keys(config).filter(key => key !== 'developer_ids');
         const filtered = settingsKeys.filter(key => key.toLowerCase().includes(focusedValue));
 
         await interaction.respond(
@@ -152,7 +148,7 @@ module.exports = {
         }
 
         // ==========================================
-        // SUBCOMMAND: GET-SERVER (MongoDB Auto-Load)
+        // SUBCOMMAND: GET-SERVER
         // ==========================================
         if (sub === 'get-server') {
             await interaction.deferReply({ ephemeral: true })
@@ -171,7 +167,8 @@ module.exports = {
             for (const [key, data] of Object.entries(config)) {
                 if (key === 'developer_ids') continue;
 
-                const dbValue = serverSettings[key];
+                // Fall back to fallback global configuration value if server hasn't overwritten it yet
+                const dbValue = serverSettings[key] !== undefined ? serverSettings[key] : data.value;
 
                 let displayValue = dbValue;
                 if (data.displayType === 'percent') displayValue = `${dbValue * 100}%`;
@@ -186,28 +183,48 @@ module.exports = {
         }
 
         // ==========================================
-        // SUBCOMMAND: SET-SERVER (MongoDB Auto-Save)
+        // SUBCOMMAND: SET-SERVER
         // ==========================================
         if (sub === 'set-server') {
             await interaction.deferReply({ ephemeral: true })
 
             const settingKey = interaction.options.getString('setting')
-            const targetValue = interaction.options.getBoolean('enabled')
+            let rawValue = interaction.options.getString('value')
 
             if (!config[settingKey]) {
                 return await interaction.editReply({ content: `hmm that setting doesnt exist 🤔` })
             }
 
+            const targetSetting = config[settingKey]
+
+            // FIXED: Dynamically typecast the incoming server value exactly like the global command does!
+            if (targetSetting.valueType === 'boolean') {
+                if (rawValue.toLowerCase() === 'true') rawValue = true
+                else if (rawValue.toLowerCase() === 'false') rawValue = false
+                else return await interaction.editReply({ content: `this setting requires a boolean (\`true\` or \`false\`)` })
+            } else if (targetSetting.valueType === 'number') {
+                const parsedNum = Number(rawValue)
+                if (isNaN(parsedNum)) return await interaction.editReply({ content: `this setting requires a valid numeric value` })
+                rawValue = parsedNum
+            }
+
+            // Save our correctly typecasted variable straight into MongoDB Atlas!
             await GuildConfig.findOneAndUpdate(
                 { guildId: interaction.guild.id },
-                { [settingKey]: targetValue },
+                { [settingKey]: rawValue },
                 { upsert: true, new: true }
             )
 
             const cleanName = settingKey.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+            
+            // Format presentation text nicely for the admin feedback message
+            let visualValue = rawValue;
+            if (targetSetting.displayType === 'percent') visualValue = `${rawValue * 100}%`;
+            else if (targetSetting.displayType === 'ms') visualValue = `${rawValue / 1000}s`;
+            else if (targetSetting.valueType === 'boolean') visualValue = rawValue ? 'ENABLED' : 'DISABLED';
 
             return await interaction.editReply({
-                content: `successfully updated server setting **${cleanName}** to \`${targetValue ? 'ENABLED' : 'DISABLED'}\``
+                content: `successfully updated server setting **${cleanName}** to \`${visualValue}\`!`
             })
         }
     },
