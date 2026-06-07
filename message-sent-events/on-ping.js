@@ -17,15 +17,15 @@ const onSmiteMessages = [
     "<:why:1513024914314104872>",
 ]
 
-function getMessage(from) {
-    let chosenMessage = from[Math.floor(Math.random()*from.length)]
+function getMessage(from, message) {
+    let chosenMessage = from[Math.floor(Math.random() * from.length)]
     chosenMessage = chosenMessage.replaceAll("<user>", `<@${message.author.id}>`)
     return chosenMessage
 }
 
 async function checkSmite(message) {
-    if (message.content.find('https://tenor.com/view/worldbox-smited-lightning-gif-17816464421779196148')) {
-        let chosenMessage = getMessage(onSmiteMessages)
+    if (message.content.includes('https://tenor.com/view/worldbox-smited-lightning-gif-17816464421779196148')) {
+        let chosenMessage = getMessage(onSmiteMessages, message)
         await message.reply(chosenMessage)
         return true
     }
@@ -40,13 +40,13 @@ module.exports = async function (message) {
     if (message.mentions.has(botId)) {
         if (message.reference && message.mentions.repliedUser?.id === botId) {
             // On reply
-            checkSmite(message)
+            await checkSmite(message)
         } else {
             // On ping
-            if (checkSmite(message)) return
-            let chosenMessage = getMessage(messages)
+            if (await checkSmite(message)) return
+            
+            let chosenMessage = getMessage(messages, message)
             return await message.reply(chosenMessage)
         }
     }
-
 }
