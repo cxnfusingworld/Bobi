@@ -13,6 +13,7 @@ const map = {
 }
 
 module.exports = async function (message) {
+    if (message.author.bot) return
     if (!message.guild) return
 
     const settings = await getGuildSettings(message.guild.id)
