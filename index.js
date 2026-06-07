@@ -56,7 +56,7 @@ async function initCommands() {
             { body: deployData },
         )
         
-        log('All commands registered successfully with Discord!')
+        log('All commands registered successfully with Discord! ✅')
     } catch (error) {
         log(`Failed to register slash commands with Discord: ${error}`, "error")
     
@@ -81,7 +81,7 @@ async function initMessageEvents() {
         // console.log(`Loaded message sent event: /${event.data.name}`)
     }
 
-    log('All message sent events initialized!')
+    log('All message sent events initialized! ✅')
 
 }
 
@@ -141,7 +141,7 @@ async function startBot() {
         log('Connecting to MongoDB Atlas...')
         mongoose.set('strictQuery', false) 
         await mongoose.connect(dbConnection)
-        log('Successfully locked connection with Bobi\'s Cloud Database!')
+        log('Connected to MongoDB Atlas! ✅')
 
         await initCommands()
         await initMessageEvents()
@@ -168,7 +168,7 @@ client.once('ready', async () => {
    
     log(`Checking whitelisted servers...`)
     for (const [id, guild] of client.guilds.cache) await checkGuildAccess(guild)
-    log(`All servers checked!`)
+    log(`All servers checked! ✅`)
 
 })
 
