@@ -69,7 +69,7 @@ module.exports = {
         const focusedValue = focusedOption.value.toLowerCase()
         
         // FIXED: Removed the boolean restriction so server settings display numbers/percentages too
-        const settingsKeys = Object.keys(config).filter(key => (key !== 'developer_ids' || key !== 'whitelisted_servers'))
+        const settingsKeys = Object.keys(config).filter(key => (key !== 'developer_ids' && key !== 'whitelisted_servers'))
         const filtered = settingsKeys.filter(key => key.toLowerCase().includes(focusedValue))
 
         await interaction.respond(
@@ -196,8 +196,10 @@ module.exports = {
             }
 
             const targetSetting = config[settingKey]
+            if (settingKey === 'developer_ids' || settingKey === 'whitelisted_servers') {
+                return await interaction.editReply({ content: `u cant edit that <:a:no:1511098533984604171>` })
+            }
 
-            // FIXED: Dynamically typecast the incoming server value exactly like the global command does!
             if (targetSetting.valueType === 'boolean') {
                 if (rawValue.toLowerCase() === 'true') rawValue = true
                 else if (rawValue.toLowerCase() === 'false') rawValue = false
@@ -208,7 +210,6 @@ module.exports = {
                 rawValue = parsedNum
             }
 
-            // Save our correctly typecasted variable straight into MongoDB Atlas!
             await GuildConfig.findOneAndUpdate(
                 { guildId: interaction.guild.id },
                 { [settingKey]: rawValue },
@@ -217,7 +218,6 @@ module.exports = {
 
             const cleanName = settingKey.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
             
-            // Format presentation text nicely for the admin feedback message
             let visualValue = rawValue
             if (targetSetting.displayType === 'percent') visualValue = `${rawValue * 100}%`
             else if (targetSetting.displayType === 'ms') visualValue = `${rawValue / 1000}s`

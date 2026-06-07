@@ -4,7 +4,6 @@ require('dotenv').config()
 const { Client, GatewayIntentBits, REST, Routes } = require('discord.js')
 const fs = require('fs')
 const path = require('path')
-// 1. Pull in mongoose at the top
 const mongoose = require('mongoose')
 
 const utilities = path.join(__dirname, 'utilities')
