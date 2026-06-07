@@ -1,4 +1,4 @@
-const config = require('../config.json')
+const { getGuildSettings } = require('../utilities/configHelper.js')
 
 const randomMessages = [
     
@@ -31,12 +31,15 @@ function getWeightedAnswer() {
 }
 
 module.exports = async function (userMessage) {
-    if (!config.random_message_enabled) return
+    if (!message.guild) return
     if (userMessage.author.bot) return
     if (activeCooldowns.has(userMessage.author.id)) return
     
+    const settings = await getGuildSettings(message.guild.id)
+    if (!settings.random_message_enabled) return
+    
     const rand = Math.random()
-    if (rand<config.random_message_chance) {
+    if (rand<settings.random_message_chance) {
 
         activeCooldowns.add(userMessage.author.id)
 
@@ -54,7 +57,7 @@ module.exports = async function (userMessage) {
 
         setTimeout(() => {
             activeCooldowns.delete(userMessage.author.id)
-        }, config.random_message_cooldown)
+        }, settings.random_message_cooldown)
 
     }
 

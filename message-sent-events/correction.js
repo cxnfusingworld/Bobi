@@ -1,4 +1,4 @@
-const config = require('../config.json')
+const { getGuildSettings } = require('../utilities/configHelper.js')
 
 const map = {
 
@@ -13,8 +13,11 @@ const map = {
 }
 
 module.exports = async function (message) {
-    if (!config.corrections_enabled) return
     if (message.author.bot) return
+    if (!message.guild) return
+    
+    const settings = await getGuildSettings(message.guild.id)
+    if (!settings.corrections_enabled) return
 
     for (const [key, value] of Object.entries(map)) {
         const messageContent = message.content.toLowerCase()
