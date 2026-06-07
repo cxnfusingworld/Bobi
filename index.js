@@ -4,6 +4,8 @@ require('dotenv').config()
 const { Client, GatewayIntentBits, REST, Routes } = require('discord.js')
 const fs = require('fs')
 const path = require('path')
+// 1. Pull in mongoose at the top
+const mongoose = require('mongoose')
 
 const utilities = path.join(__dirname, 'utilities')
 const log = require(path.join(utilities, "logger.js"))
@@ -20,6 +22,8 @@ const commands = {}
 const messageSentEvents = []
 
 const whitelistedServers = ['1510727709473509426', '1440792579351515188']
+
+const dbConnection = `mongodb+srv://main_db_user:${process.env.MONGO_DB_PASSWORD}@bobi.86uky8t.mongodb.net/?appName=Bobi`
 
 /// Functions \\\
 
@@ -132,11 +136,29 @@ async function checkGuildAccess(guild) {
 
 /// Initialization \\\
 
-// Loading
-initCommands()
-initMessageEvents()
+async function startBot() {
+    try {
+        log('Connecting to MongoDB Atlas...')
+        mongoose.set('strictQuery', false) 
+        await mongoose.connect(dbConnection)
+        log('Successfully locked connection with Bobi\'s Cloud Database!')
 
-// Events
+        await initCommands()
+        await initMessageEvents()
+
+        await client.login(process.env.DISCORD_TOKEN)
+
+    } catch (error) {
+        log(`CRITICAL CORE BOOT FAILURE: ${error.message}`, "error")
+        process.exit(1)
+    }
+}
+
+/// Start Up \\\
+startBot()
+
+/// Global Event Listeners \\\
+
 client.on('interactionCreate', onInteraction)
 client.on('messageCreate', onMessageSent)
 
@@ -150,17 +172,12 @@ client.once('ready', async () => {
 
 })
 
-// Login
-client.login(process.env.DISCORD_TOKEN)
-
-// Server Check
 client.on('guildCreate', async (guild) => {
     await checkGuildAccess(guild)
 })
 
-// Uptime Handler
+/// Uptime System \\\
 const express = require('express')
-const { table } = require('console')
 const app = express()
 const PORT = process.env.PORT || 3000
 
