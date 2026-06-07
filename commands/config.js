@@ -65,16 +65,16 @@ module.exports = {
         ),
 
     async autocomplete(interaction) {
-        const focusedOption = interaction.options.getFocused(true);
-        const focusedValue = focusedOption.value.toLowerCase();
+        const focusedOption = interaction.options.getFocused(true)
+        const focusedValue = focusedOption.value.toLowerCase()
         
         // FIXED: Removed the boolean restriction so server settings display numbers/percentages too
-        const settingsKeys = Object.keys(config).filter(key => key !== 'developer_ids');
-        const filtered = settingsKeys.filter(key => key.toLowerCase().includes(focusedValue));
+        const settingsKeys = Object.keys(config).filter(key => (key !== 'developer_ids' || key !== 'whitelisted_servers'))
+        const filtered = settingsKeys.filter(key => key.toLowerCase().includes(focusedValue))
 
         await interaction.respond(
             filtered.slice(0, 25).map(key => ({ name: key.replace(/_/g, ' '), value: key }))
-        );
+        )
     },
 
     async execute(interaction) {
@@ -101,7 +101,7 @@ module.exports = {
                 .setTimestamp()
 
             for (const [key, data] of Object.entries(config)) {
-                if (key === 'developer_ids') continue
+                if (key === 'developer_ids' || key === 'whitelisted_servers') continue
 
                 let displayValue = data.value
                 if (data.displayType === 'percent') displayValue = `${data.value * 100}%`
@@ -165,18 +165,18 @@ module.exports = {
                 .setTimestamp()
 
             for (const [key, data] of Object.entries(config)) {
-                if (key === 'developer_ids') continue;
+                if (key === 'developer_ids') continue
 
                 // Fall back to fallback global configuration value if server hasn't overwritten it yet
-                const dbValue = serverSettings[key] !== undefined ? serverSettings[key] : data.value;
+                const dbValue = serverSettings[key] !== undefined ? serverSettings[key] : data.value
 
-                let displayValue = dbValue;
-                if (data.displayType === 'percent') displayValue = `${dbValue * 100}%`;
-                else if (data.displayType === 'ms') displayValue = `${dbValue / 1000}s`;
-                else if (data.valueType === 'boolean') displayValue = dbValue ? '🟢 Enabled' : '🔴 Disabled';
+                let displayValue = dbValue
+                if (data.displayType === 'percent') displayValue = `${dbValue * 100}%`
+                else if (data.displayType === 'ms') displayValue = `${dbValue / 1000}s`
+                else if (data.valueType === 'boolean') displayValue = dbValue ? '🟢 Enabled' : '🔴 Disabled'
 
-                const cleanName = key.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-                embed.addFields({ name: cleanName, value: `\`${displayValue}\``, inline: true });
+                const cleanName = key.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
+                embed.addFields({ name: cleanName, value: `\`${displayValue}\``, inline: true })
             }
 
             return await interaction.editReply({ embeds: [embed] })
@@ -215,13 +215,13 @@ module.exports = {
                 { upsert: true, new: true }
             )
 
-            const cleanName = settingKey.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+            const cleanName = settingKey.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
             
             // Format presentation text nicely for the admin feedback message
-            let visualValue = rawValue;
-            if (targetSetting.displayType === 'percent') visualValue = `${rawValue * 100}%`;
-            else if (targetSetting.displayType === 'ms') visualValue = `${rawValue / 1000}s`;
-            else if (targetSetting.valueType === 'boolean') visualValue = rawValue ? 'ENABLED' : 'DISABLED';
+            let visualValue = rawValue
+            if (targetSetting.displayType === 'percent') visualValue = `${rawValue * 100}%`
+            else if (targetSetting.displayType === 'ms') visualValue = `${rawValue / 1000}s`
+            else if (targetSetting.valueType === 'boolean') visualValue = rawValue ? 'ENABLED' : 'DISABLED'
 
             return await interaction.editReply({
                 content: `successfully updated server setting **${cleanName}** to \`${visualValue}\`!`
