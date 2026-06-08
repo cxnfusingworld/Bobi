@@ -1,9 +1,12 @@
 const { SlashCommandBuilder, InteractionContextType, EmbedBuilder, PermissionFlagsBits } = require('discord.js')
 const GuildConfig = require('../models/GuildConfig.js') 
 const fs = require('fs')
+const path = require('path')
 
-let config = require(`../config.json`)
-const emojis = require(`../assets/emojis.json`)
+const configPath = path.join(__dirname, '../config.json')
+let config = require(configPath)
+
+const emojis = require('../assets/emojis.json')
 
 module.exports = {
     data: new SlashCommandBuilder()
