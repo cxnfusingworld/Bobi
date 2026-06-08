@@ -161,6 +161,7 @@ async function startBot() {
         await initMessageEvents()
 
         await client.login(process.env.DISCORD_TOKEN)
+        log('Boot Successful! ✅')
 
     } catch (error) {
         log(`CRITICAL CORE BOOT FAILURE: ${error.message}`, "error")
