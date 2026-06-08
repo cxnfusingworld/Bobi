@@ -167,7 +167,7 @@ module.exports = {
                 .setTimestamp()
 
             for (const [key, data] of Object.entries(config)) {
-                if (key === 'developer_ids') continue
+                if (key === 'developer_ids' || key === 'whitelisted_servers') continue
 
                 // Fall back to fallback global configuration value if server hasn't overwritten it yet
                 const dbValue = serverSettings[key] !== undefined ? serverSettings[key] : data.value
