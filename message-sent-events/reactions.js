@@ -1,7 +1,4 @@
 const { getGuildSettings } = require('../utilities/configHelper.js')
-const path = require('path')
-const fs = require('fs')
-
 const emojis = require("../assets/emojis.json")
 
 const map = {

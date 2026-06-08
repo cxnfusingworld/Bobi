@@ -1,9 +1,6 @@
 const { SlashCommandBuilder, AttachmentBuilder, InteractionContextType } = require('discord.js')
-const path = require('path')
-const fs = require('fs')
 
-const selfieFolderPath = path.join(__dirname, "../assets/selfie")
-const catSelfies = fs.readdirSync(selfieFolderPath)
+const catSelfies = fs.readdirSync('../assets/selfie')
 
 module.exports = {
     data: new SlashCommandBuilder()
