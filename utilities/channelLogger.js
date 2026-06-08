@@ -9,7 +9,7 @@ const { EmbedBuilder } = require('discord.js')
  * @param {string} [logData.color] - Hex code or name color (Defaults to Orange)
  * @param {Array<Object>} [logData.fields] - Optional array of fields [{ name: '', value: '', inline: true }]
  */
-async function sendChannelLog(channel, logData) {
+module.exports = async function (channel, logData) {
     if (!channel || !channel.isTextBased()) return false
 
     try {
@@ -30,5 +30,3 @@ async function sendChannelLog(channel, logData) {
         return false
     }
 }
-
-module.exports = { sendChannelLog }
