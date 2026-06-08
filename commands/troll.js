@@ -1,4 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder, PermissionsBitField, InteractionContextType } = require('discord.js')
+const emojis = require('../assets/emojis.json')
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -47,7 +48,7 @@ module.exports = {
 
             if (!allowedToUse) {                
                 return await interaction.reply({
-                    content: 'u cant use this command <a:no:1511098533984604171>',
+                    content: `u cant use this command ${emojis.no}`,
                     ephemeral: true
                 })
             }

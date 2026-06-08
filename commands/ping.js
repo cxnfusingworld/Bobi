@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, InteractionContextType } = require('discord.js');
+const { SlashCommandBuilder, InteractionContextType } = require('discord.js')
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -15,12 +15,12 @@ module.exports = {
             content: 'calculating ball velocity...', 
             withResponse: true,
             ephemeral: true,
-        });
+        })
 
-        const roundtripLatency = Math.max(resource.message.createdTimestamp - interaction.createdTimestamp, 0);
+        const roundtripLatency = Math.max(resource.message.createdTimestamp - interaction.createdTimestamp, 0)
         
-        const wsPing = interaction.client.ws.ping;
-        const websocketPingDisplay = wsPing < 0 ? 'Calculating...' : `${wsPing}ms`;
+        const wsPing = interaction.client.ws.ping
+        const websocketPingDisplay = wsPing < 0 ? 'Calculating...' : `${wsPing}ms`
 
         await interaction.editReply(
             `🏓 pong!
@@ -29,7 +29,7 @@ module.exports = {
 [32mroundtrip latency:[39m ${roundtripLatency}ms
    [32mwebsocket ping:[39m ${websocketPingDisplay}
 \`\`\``
-        );
+        )
         
     },
-};
+}

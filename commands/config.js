@@ -197,7 +197,7 @@ module.exports = {
             }
 
             if (settingKey === 'developer_ids' || settingKey === 'whitelisted_servers') {
-                return await interaction.editReply({ content: `u cant edit that <a:no:1511098533984604171>` })
+                return await interaction.editReply({ content: `u cant edit that ${emojis.no}` })
             }
 
             const targetSetting = config[settingKey]
