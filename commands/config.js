@@ -97,7 +97,7 @@ module.exports = {
         // ==========================================
         if (sub === 'get-global') {
             const configEmbed = new EmbedBuilder()
-                .setTitle("⚙️ Bobi Global Configuration")
+                .setTitle(`${emojis.settings} Global Configuration`)
                 .setDescription("default global settings")
                 .setColor("Blurple")
                 .setTimestamp()
@@ -161,7 +161,7 @@ module.exports = {
             }
 
             const embed = new EmbedBuilder()
-                .setTitle(`⚙️ ${interaction.guild.name} Configuration`)
+                .setTitle(`${emojis.settings} ${interaction.guild.name} Configuration`)
                 .setDescription("server specific settings")
                 .setColor("Orange")
                 .setTimestamp()
@@ -232,7 +232,7 @@ module.exports = {
                     const logChannel = await interaction.guild.channels.fetch(logChannelId)
                     if (logChannel) {
                         await sendChannelLog(logChannel, {
-                            title: "⚙️ Configuration Updated",
+                            title: `${emojis.settings} Configuration Updated`,
                             description: `A server setting was modified by ${interaction.user}`,
                             color: "Orange",
                             fields: [
