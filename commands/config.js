@@ -71,8 +71,7 @@ module.exports = {
         const focusedOption = interaction.options.getFocused(true)
         const focusedValue = focusedOption.value.toLowerCase()
         
-        // FIXED: Removed the boolean restriction so server settings display numbers/percentages too
-        const settingsKeys = Object.keys(config).filter(key => (key !== 'developer_ids' && key !== 'whitelisted_servers'))
+        const settingsKeys = Object.keys(config).filter(key => key !== 'developer_ids' && key !== 'whitelisted_servers')
         const filtered = settingsKeys.filter(key => key.toLowerCase().includes(focusedValue))
 
         await interaction.respond(
@@ -170,7 +169,6 @@ module.exports = {
             for (const [key, data] of Object.entries(config)) {
                 if (key === 'developer_ids' || key === 'whitelisted_servers') continue
 
-                // Fall back to fallback global configuration value if server hasn't overwritten it yet
                 const dbValue = serverSettings[key] !== undefined ? serverSettings[key] : data.value
 
                 let displayValue = dbValue
@@ -198,10 +196,11 @@ module.exports = {
                 return await interaction.editReply({ content: `hmm that setting doesnt exist 🤔` })
             }
 
-            const targetSetting = config[settingKey]
             if (settingKey === 'developer_ids' || settingKey === 'whitelisted_servers') {
                 return await interaction.editReply({ content: `u cant edit that <a:no:1511098533984604171>` })
             }
+
+            const targetSetting = config[settingKey]
 
             if (targetSetting.valueType === 'boolean') {
                 if (rawValue.toLowerCase() === 'true') rawValue = true
@@ -213,13 +212,14 @@ module.exports = {
                 rawValue = parsedNum
             }
 
-            let serverSettings = await GuildConfig.findOneAndUpdate(
+            const serverSettings = await GuildConfig.findOneAndUpdate(
                 { guildId: interaction.guild.id },
                 { [settingKey]: rawValue },
                 { upsert: true, new: true }
             )
 
-            const cleanName = settingKey.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
+            const cleanName = key => key.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
+            const formattedName = cleanName(settingKey)
             
             let visualValue = rawValue
             if (targetSetting.displayType === 'percent') visualValue = `${rawValue * 100}%`
@@ -229,14 +229,14 @@ module.exports = {
             try {
                 const logChannelId = serverSettings.server_log_channel_id
                 if (logChannelId && logChannelId !== 'none') {
-                    const logChannel = await interaction.guild.channels.fetch(logChannelId).catch(() => null)
+                    const logChannel = await interaction.guild.channels.fetch(logChannelId)
                     if (logChannel) {
                         await sendChannelLog(logChannel, {
                             title: "⚙️ Configuration Updated",
                             description: `A server setting was modified by ${interaction.user}`,
                             color: "Orange",
                             fields: [
-                                { name: "Setting", value: `\`${cleanName}\``, inline: true },
+                                { name: "Setting", value: `\`${formattedName}\``, inline: true },
                                 { name: "New Value", value: `\`${visualValue}\``, inline: true }
                             ]
                         })
@@ -246,8 +246,8 @@ module.exports = {
                 console.error("Failed to send server audit log:", auditError)
             }
 
-            await interaction.editReply({
-                content: `successfully updated server setting **${cleanName}** to \`${visualValue}\`!`
+            return await interaction.editReply({
+                content: `successfully updated server setting **${formattedName}** to \`${visualValue}\`!`
             })
         }
     },
