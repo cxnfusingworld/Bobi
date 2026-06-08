@@ -1,5 +1,6 @@
 const { SlashCommandBuilder, InteractionContextType, EmbedBuilder, PermissionFlagsBits } = require('discord.js')
 const GuildConfig = require('../models/GuildConfig.js') 
+const fs = require('fs')
 
 let config = require(`../config.json`)
 const emojis = require(`../assets/emojis.json`)
