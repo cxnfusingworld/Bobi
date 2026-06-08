@@ -1,4 +1,5 @@
 const { SlashCommandBuilder, AttachmentBuilder, InteractionContextType } = require('discord.js')
+const fs = require('fs')
 
 const catSelfies = fs.readdirSync('../assets/selfie')
 
