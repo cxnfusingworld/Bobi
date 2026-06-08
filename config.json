@@ -50,7 +50,14 @@
     "message_reactions_enabled": {
         "value": true,
         "valueType": "boolean"
-    }
+    },
 
+
+
+    "server_log_channel_id": {
+        "value": "none",
+        "valueType": "string",
+        "displayType": "text"
+    }
 
 }

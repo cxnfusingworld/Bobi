@@ -1,12 +1,14 @@
 const { SlashCommandBuilder, InteractionContextType, EmbedBuilder, PermissionFlagsBits } = require('discord.js')
-const GuildConfig = require('../models/GuildConfig.js') 
 const fs = require('fs')
 const path = require('path')
+
+const GuildConfig = require('../models/GuildConfig.js') 
 
 const configPath = path.join(__dirname, '../config.json')
 let config = require(configPath)
 
 const emojis = require('../assets/emojis.json')
+const sendChannelLog = require('../utils/loggerHelper.js')
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -58,10 +60,9 @@ module.exports = {
                         .setAutocomplete(true) 
                         .setRequired(true)
                 )
-                // FIXED: Changed to StringOption so it accepts any input and triggers autocomplete!
                 .addStringOption(option =>
                     option.setName('value')
-                        .setDescription('the new value (booleans use true/false, percentages use 0.03 etc.)')
+                        .setDescription('true/false | 0.5 -> 50% | 1000 -> 1 second')
                         .setRequired(true)
                 )
         ),
@@ -212,7 +213,7 @@ module.exports = {
                 rawValue = parsedNum
             }
 
-            await GuildConfig.findOneAndUpdate(
+            let serverSettings = await GuildConfig.findOneAndUpdate(
                 { guildId: interaction.guild.id },
                 { [settingKey]: rawValue },
                 { upsert: true, new: true }
@@ -225,7 +226,27 @@ module.exports = {
             else if (targetSetting.displayType === 'ms') visualValue = `${rawValue / 1000}s`
             else if (targetSetting.valueType === 'boolean') visualValue = rawValue ? 'ENABLED' : 'DISABLED'
 
-            return await interaction.editReply({
+            try {
+                const logChannelId = serverSettings.server_log_channel_id
+                if (logChannelId && logChannelId !== 'none') {
+                    const logChannel = await interaction.guild.channels.fetch(logChannelId).catch(() => null)
+                    if (logChannel) {
+                        await sendChannelLog(logChannel, {
+                            title: "⚙️ Configuration Updated",
+                            description: `A server setting was modified by ${interaction.user}`,
+                            color: "Orange",
+                            fields: [
+                                { name: "Setting", value: `\`${cleanName}\``, inline: true },
+                                { name: "New Value", value: `\`${visualValue}\``, inline: true }
+                            ]
+                        })
+                    }
+                }
+            } catch (auditError) {
+                console.error("Failed to send server audit log:", auditError)
+            }
+
+            await interaction.editReply({
                 content: `successfully updated server setting **${cleanName}** to \`${visualValue}\`!`
             })
         }
