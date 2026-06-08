@@ -24,7 +24,7 @@ const messageSentEvents = []
 
 const whitelistedServers = globalConfig.whitelisted_servers
 
-const dbConnection = `mongodb+srv://main_db_user:${process.env.MONGO_DB_PASSWORD}@bobi.86uky8t.mongodb.net/?appName=Bobi`
+const dbConnection = process.env.MONGO_DB_CONNECTION
 
 /// Functions \\\
 
