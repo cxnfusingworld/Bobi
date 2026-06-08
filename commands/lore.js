@@ -26,7 +26,7 @@ bobi was a **stray cat**, and *technically* still is.
 she lives in texas, and you can usually find her on the back porch
 her *favorite* activity is probably.. rolling in the sand and then trying to get someone to pet her
 oh and eating of course.
-her diet consists of cat food, and milk.
+her diet consists of cat food, and uhh.. whatever else she finds outside!
 
 anyways, since shes a stray, no one really knows how old she is 🤔🤔
 so your guess is as good as mine..

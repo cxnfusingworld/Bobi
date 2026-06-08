@@ -1,7 +1,7 @@
 const { EmbedBuilder } = require('discord.js')
 
 /**
- * Sends a highly formatted embed log to a specific text channel.
+ * cool log thingy!!
  * @param {TextChannel} channel - The Discord channel object to send the log to
  * @param {Object} logData - The layout data for the log
  * @param {string} logData.title - The title of the embed
