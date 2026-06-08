@@ -224,7 +224,7 @@ module.exports = {
             let visualValue = rawValue
             if (targetSetting.displayType === 'percent') visualValue = `${rawValue * 100}%`
             else if (targetSetting.displayType === 'ms') visualValue = `${rawValue / 1000}s`
-            else if (targetSetting.valueType === 'boolean') visualValue = rawValue ? 'ENABLED' : 'DISABLED'
+            else if (targetSetting.valueType === 'boolean') visualValue = rawValue ? '🟢 Enabled' : '🔴 Disabled'
 
             try {
                 const logChannelId = serverSettings.server_log_channel_id
