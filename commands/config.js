@@ -8,7 +8,7 @@ const configPath = path.join(__dirname, '../config.json')
 let config = require(configPath)
 
 const emojis = require('../assets/emojis.json')
-const sendChannelLog = require('../utils/loggerHelper.js')
+const sendChannelLog = require('../utilities/channelLogger.js')
 
 module.exports = {
     data: new SlashCommandBuilder()
