@@ -1,6 +1,7 @@
 const { getGuildSettings } = require('../utilities/configHelper.js')
+const emojis = require(`../assets/emojis.json`)
 
-const messages = [
+const onPingMessages = [
     "what nowww??",
     "meow",
     "que? yo no hablo ingles",
@@ -16,7 +17,7 @@ const onSmiteMessages = [
     "*dies*",
     "bro <fuck> you",
     "rude :(",
-    "<:why:1513024914314104872>",
+    emojis.why,
 ]
 
 function getMessage(from, message, settings) {
@@ -56,7 +57,7 @@ module.exports = async function (message) {
             // On ping
             if (await checkSmite(message, settings)) return
             
-            let chosenMessage = getMessage(messages, message, settings)
+            let chosenMessage = getMessage(onPingMessages, message, settings)
             return await message.reply(chosenMessage)
         }
     }

@@ -1,4 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js')
+const emojis = require(`../assets/emojis.json`)
 
 module.exports = {
     // 1. Define the command and its arguments (options)
@@ -35,11 +36,11 @@ module.exports = {
             (userChoice === 'paper' && botChoice === 'rock') ||
             (userChoice === 'scissors' && botChoice === 'paper'))
         ) {
-            result = 'you win *i guess*, play me again ima win'
+            result = `you win *i guess*, play me again ima win`
         } else if (botChoice === 'wd') {
-            result = 'you read that right.\n# <:innocent:1511136501927247993>'
+            result = `you read that right.\n# ${emojis.innocent}`
         } else {
-            result = 'i won, u lost to a **cat** lol\n# <:laughing:1511136962659094699>'
+            result = `i won, u lost to a **cat** lol\n# ${emojis.laughing}`
         }
 
         const emojiMap = { rock: 'rock 🪨', paper: 'paper 📄', scissors: 'scissors ✂️', wd: 'world domination.' }

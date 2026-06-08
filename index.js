@@ -8,7 +8,8 @@ const mongoose = require('mongoose')
 
 const utilities = path.join(__dirname, 'utilities')
 const log = require(path.join(utilities, "logger.js"))
-const globalConfig = require(path.join(__dirname, 'config.json'))
+const globalConfig = require(`./config.json`)
+const emojis = require(`./assets/emojis.json`)
 
 const client = new Client({
     intents: [
@@ -138,7 +139,7 @@ async function checkGuildAccess(guild) {
             const systemChannel = guild.systemChannel || guild.channels.cache.find(ch => ch.isTextBased() && ch.permissionsFor(guild.members.me).has('SendMessages'))
             
             if (systemChannel) {
-                await systemChannel.send("<:scared:1511147876150018208> wth where am i?? im leaving cya\n-# if you want bobi in this server DM @cxnfusion")
+                await systemChannel.send(`${emojis.scared} wth where am i?? im leaving cya\n-# if you want bobi in this server DM @cxnfusion`)
             }
         } catch (err) {
             log(`Could not send goodbye message in ${guild.name}: ${err.message}`)

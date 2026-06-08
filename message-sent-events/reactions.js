@@ -1,4 +1,8 @@
 const { getGuildSettings } = require('../utilities/configHelper.js')
+const path = require('path')
+const fs = require('fs')
+
+const emojis = require("../assets/emojis.json")
 
 const map = {
 
@@ -7,8 +11,8 @@ const map = {
     ['fish']: '👀',
 
     ['bobi']: '🐱',
-    ['domination']: '<:innocent:1511136501927247993>',
-    ['water']: '<:scared:1511147876150018208>',
+    ['domination']: emojis.innocent,
+    ['water']: emojis.scared,
 
 }
 

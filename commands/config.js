@@ -1,10 +1,8 @@
-const fs = require('fs')
-const path = require('path')
-const configPath = path.join(__dirname, '../config.json')
-let config = require(configPath)
-
 const { SlashCommandBuilder, InteractionContextType, EmbedBuilder, PermissionFlagsBits } = require('discord.js')
 const GuildConfig = require('../models/GuildConfig.js') 
+
+let config = require(`../config.json`)
+const emojis = require(`../assets/emojis.json`)
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -84,7 +82,7 @@ module.exports = {
         if (sub === 'get-global' || sub === 'set-global') {
             if (!config.developer_ids.includes(interaction.user.id)) {
                 return await interaction.reply({ 
-                    content: "<:scared:1511147876150018208> hey wait u aren't a dev! u can't manage global settings", 
+                    content: `${emojis.scared} hey wait u aren't a dev! u can't manage global settings`, 
                     ephemeral: true 
                 })
             }
