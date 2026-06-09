@@ -177,7 +177,7 @@ startBot()
 client.on('interactionCreate', onInteraction)
 client.on('messageCreate', onMessageSent)
 
-client.once('ready', async () => {
+client.once('clientReady', async () => {
 
     log(`Logged in as ${client.user.tag}!`)
    
