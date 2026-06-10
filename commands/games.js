@@ -302,8 +302,8 @@ module.exports = {
                     collector.stop()
                 } else {
                     const statusDescription = `<@${challenger.id}> vs. <@${opponent.id}>\n\n` +
-                        `${challengerChoice ? '✅' : '⏳'} <@${challenger.id}> made a choice\n` +
-                        `${opponentChoice ? '✅' : '⏳'} <@${opponent.id}> made a choice`
+                        `${challengerChoice ? '✅' : '⏳'} <@${challenger.id}> ${challengerChoice ? 'made a choice' : 'is choosing...'}\n` +
+                        `${opponentChoice ? '✅' : '⏳'} <@${opponent.id}> ${opponentChoice ? 'made a choice' : 'is choosing...'}`
                     
                     await btnInteraction.update({
                         embeds: [EmbedBuilder.from(gameEmbed).setDescription(statusDescription)]
