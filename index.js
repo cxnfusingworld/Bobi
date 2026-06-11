@@ -6,6 +6,8 @@ const fs = require('fs')
 const path = require('path')
 const mongoose = require('mongoose')
 
+const { getGuildSettings } = require('./utilities/configHelper.js')
+
 const utilities = path.join(__dirname, 'utilities')
 const log = require(path.join(utilities, "logger.js"))
 const globalConfig = require(`./config.json`)
@@ -122,7 +124,20 @@ async function onInteraction(interaction) {
 }
 
 async function onMessageSent(message) {
-    
+
+    const settings = await getGuildSettings(message.guild.id)
+    try {
+        const suspectedBotRoleId = settings.server_suspected_bot_role_id; 
+        
+        if (suspectedBotRoleId && suspectedBotRoleId !== 'none') {
+            if (message.member?.roles.cache.has(suspectedBotRoleId)) {
+                return await message.delete().catch(() => {});
+            }
+        }
+    } catch (error) {
+        log(`[Error] Failed to delete bot message: ${error}`, 'error')
+    }
+
     for (const event of messageSentEvents) {
         event(message)
     }

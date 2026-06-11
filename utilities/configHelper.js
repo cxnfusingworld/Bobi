@@ -1,6 +1,8 @@
 const globalConfig = require('../config.json');
 const GuildConfig = require('../models/GuildConfig.js');
 
+const ignoreKeys = ['developer_ids', 'whitelisted_servers']
+
 /**
  * Dynamically fetches settings for a server, falling back to global defaults if needed.
  * @param {string} guildId - The Discord Server ID
@@ -10,7 +12,7 @@ async function getGuildSettings(guildId) {
     if (!guildId) {
         const fallbacks = {};
         for (const [key, data] of Object.entries(globalConfig)) {
-            if (key !== 'developer_ids') fallbacks[key] = data.value;
+            if (ignoreKeys.includes(key)) fallbacks[key] = data.value;
         }
         return fallbacks;
     }
@@ -20,9 +22,9 @@ async function getGuildSettings(guildId) {
     const activeConfig = {};
 
     for (let [key, data] of Object.entries(globalConfig)) {
-        if (key === 'developer_ids' || key === 'whitelisted_servers') continue
+        if (ignoreKeys.includes(key)) continue
 
-        if (data.valueType === 'channel') key = key+'_id'
+        if (data.valueType === 'channel' || data.valueType === 'role') key = key+'_id'
 
         activeConfig[key] = (serverSettings && serverSettings[key] !== undefined) 
             ? serverSettings[key] 

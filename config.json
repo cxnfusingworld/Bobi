@@ -59,6 +59,19 @@
         "valueType": "channel",
         "displayType": "channel"
     },
+
+    
+
+    "server_suspected_bot_role": {
+        "value": "none",
+        "valueType": "role",
+        "displayType": "role"
+    },
+    "server_admin_role": {
+        "value": "none",
+        "valueType": "role",
+        "displayType": "role"
+    },
     "server_bot_catcher_channel": {
         "value": "none",
         "valueType": "channel",

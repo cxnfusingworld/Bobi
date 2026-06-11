@@ -1,6 +1,8 @@
 const mongoose = require('mongoose')
 const config = require('../config.json')
 
+const ignoreKeys = ['developer_ids', 'whitelisted_servers']
+
 const schemaDefinition = {
     guildId: { 
         type: String, 
@@ -10,12 +12,12 @@ const schemaDefinition = {
 }
 
 for (let [key, data] of Object.entries(config)) {
-    if (key === 'developer_ids' || key === 'whitelisted_servers') continue
+    if (ignoreKeys.includes(key)) continue
 
     let nativeType
     if (data.valueType === 'boolean') nativeType = Boolean
     else if (data.valueType === 'number') nativeType = Number
-    else if (data.valueType === 'channel') {
+    else if (data.valueType === 'channel' || data.valueType === 'role') {
         nativeType = String
         key = key+'_id'
     }
