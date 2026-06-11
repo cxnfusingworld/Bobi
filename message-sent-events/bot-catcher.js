@@ -20,71 +20,107 @@ module.exports = async function (message) {
     
     try {
         const logChannelId = settings.server_log_channel_id || botCatcherChannelId
-        if (logChannelId && logChannelId !== 'none') {
-            const logChannel = await message.guild.channels.fetch(logChannelId)
-            if (logChannel) {
+        const logChannel = await message.guild.channels.fetch(logChannelId)
+        
+        if (logChannel) {
 
-                let content = message.content
-                if (content.length > maxMessageSize) {
-                    content = content.substring(0, maxMessageSize) + '...'
-                }
+            let content = message.content || "*no text content*"
+            if (content.length > maxMessageSize) {
+                content = content.substring(0, maxMessageSize) + '...'
+            }
 
-                const finalAttachments = []
-                const fileLinks = []
+            const imageAttachments = []
+        const fileAttachments = []
 
-                if (message.attachments.size > 0) {
-                    for (const [id, attachment] of message.attachments) {
-                        const isImage = attachment.contentType?.startsWith('image/') || 
-                                        /\.(jpg|jpeg|png|gif|webp)$/i.test(attachment.url)
-                        
-                        if (isImage) {
-                            try {
-                                const response = await axios.get(attachment.url, { responseType: 'arraybuffer' })
-                                const buffer = Buffer.from(response.data, 'binary')
-                                
-                                const freshImage = new AttachmentBuilder(buffer, { name: attachment.name })
-                                finalAttachments.push(freshImage)
-                            } catch (downloadError) {
-                                console.error(`[Bot Catcher] Failed to save image asset: ${attachment.name}`, downloadError)
-                                fileLinks.push(`❌ Broken Image: **${attachment.name}**`)
-                            }
-                        } else {
-                            fileLinks.push(`📄 [${attachment.name}](${attachment.url})`)
-                        }
+        if (message.attachments.size > 0) {
+            for (const [id, attachment] of message.attachments) {
+                const isImage = attachment.contentType?.startsWith('image/') || 
+                                /\.(jpg|jpeg|png|gif|webp)$/i.test(attachment.url)
+                try {
+                    const response = await axios.get(attachment.url, { responseType: 'arraybuffer' })
+                    const buffer = Buffer.from(response.data, 'binary')
+                    const freshFile = new AttachmentBuilder(buffer, { name: attachment.name })
+
+                    if (isImage) {
+                        imageAttachments.push(freshFile)
+                    } else {
+                        fileAttachments.push(freshFile)
                     }
+                } catch (err) {
+                    console.error(`[Bot Catcher] Asset save failed: ${attachment.name}`, err)
                 }
-
-                let layout = new ComponentBuilder()
-                    .setColor(Colors.Red)
-                    .addText(`# ⚠️  Possible Bot  ⚠️`)
-                    .addDivider()
-                    .addText(`${message.author} chatted in ${botCatcherChannel}`)
-                    .addDivider()
-                    .addText("Message:")
-                    .addText(content || "_No text content_")
-
-                if (finalAttachments.length > 0) {
-                    layout.addDivider()
-                    layout.addText("🖼️ Attached Images:")
-                    layout.addImages(finalAttachments)
-                }
-
-                if (fileLinks.length > 0) {
-                    layout.addDivider()
-                    layout.addText("📎 Attached Files:")
-                    layout.addText(fileLinks.join('\n'))
-                }
-
-                const finalPayload = layout
-                    .setNoPing()
-                    .build()
-                        
-                await logChannel.send(finalPayload)
             }
         }
+
+        let layoutBuilder = new ComponentBuilder()
+            .setColor(Colors.Red)
+            .addText(`# ⚠️  Possible Bot  ⚠️`)
+            .addDivider()
+            .addText(`${message.author} chatted in ${botCatcherChannel}`)
+            .addDivider()
+            .addText("Message:")
+            .addText(content)
+
+        if (imageAttachments.length > 0) {
+            layoutBuilder
+                .addDivider()
+                .addText("🖼️ Attached Images:")
+                .addImages(imageAttachments)
+        }
+
+        if (fileAttachments.length > 0) {
+            layoutBuilder
+                .addDivider()
+                .addText("📎 Attached Files:")
+                .addText("⏳ *Saving files...*")
+        }
+
+        const payload = layoutBuilder.setNoPing().build()
+        
+        await message.delete().catch(() => {})
+
+        const sentLog = await logChannel.send({
+            ...payload,
+            files: [...payload.files, ...fileAttachments] 
+        })
+
+        if (fileAttachments.length > 0) {
+            const totalAttachments = Array.from(sentLog.attachments.values())
+
+            const freshLinks = totalAttachments
+                .filter(att => !/\.(jpg|jpeg|png|gif|webp)$/i.test(att.name))
+                .map(att => `📄 [${att.name}](${att.url})`)
+                .join('\n')
+
+            let updatedBuilder = new ComponentBuilder()
+                .setColor(Colors.Red)
+                .addText(`# ⚠️  Possible Bot  ⚠️`)
+                .addDivider()
+                .addText(`${message.author} chatted in ${botCatcherChannel}`)
+                .addDivider()
+                .addText("Message:")
+                .addText(content)
+
+            if (imageAttachments.length > 0) {
+                updatedBuilder
+                    .addDivider()
+                    .addText("🖼️ Attached Images:")
+                    .addImages(imageAttachments)
+            }
+
+            updatedBuilder
+                .addDivider()
+                .addText("📎 Attached Files:")
+                .addText(freshLinks || "⚠️ *Failed to generate secure links*")
+
+            const finalPayload = updatedBuilder.setNoPing().build()
+            await sentLog.edit({
+                components: finalPayload.components,
+                allowedMentions: finalPayload.allowedMentions
+            })
+        }
+    }
     } catch (auditError) {
         console.error("[Bot Catcher]: Failed to send server audit log:", auditError)
     }
-
-    message.delete()
 }

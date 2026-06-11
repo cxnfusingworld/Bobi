@@ -11,7 +11,7 @@ const {
     Colors
 } = require('discord.js')
 
-class BobiV2 {
+class ComponentBuilder {
     constructor() {
         this.container = new ContainerBuilder()
         this.files = []
@@ -110,4 +110,4 @@ class BobiV2 {
     }
 }
 
-module.exports = BobiV2
+module.exports = ComponentBuilder
