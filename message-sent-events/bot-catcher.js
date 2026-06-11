@@ -1,4 +1,5 @@
-const { Colors, MessageFlags } = require('discord.js')
+const { Colors, MessageFlags, AttachmentBuilder } = require('discord.js')
+const axios = require('axios')
 
 const { getGuildSettings } = require('../utilities/configHelper.js')
 const ComponentBuilder = require('../utilities/v2Helper')
@@ -28,20 +29,29 @@ module.exports = async function (message) {
                     content = content.substring(0, maxMessageSize) + '...'
                 }
 
-                const imageUrls = []
+                const finalAttachments = []
                 const fileLinks = []
 
                 if (message.attachments.size > 0) {
-                    message.attachments.forEach(attachment => {
+                    for (const [id, attachment] of message.attachments) {
                         const isImage = attachment.contentType?.startsWith('image/') || 
                                         /\.(jpg|jpeg|png|gif|webp)$/i.test(attachment.url)
                         
                         if (isImage) {
-                            imageUrls.push(attachment.url)
+                            try {
+                                const response = await axios.get(attachment.url, { responseType: 'arraybuffer' })
+                                const buffer = Buffer.from(response.data, 'binary')
+                                
+                                const freshImage = new AttachmentBuilder(buffer, { name: attachment.name })
+                                finalAttachments.push(freshImage)
+                            } catch (downloadError) {
+                                console.error(`[Bot Catcher] Failed to save image asset: ${attachment.name}`, downloadError)
+                                fileLinks.push(`❌ Broken Image: **${attachment.name}**`)
+                            }
                         } else {
                             fileLinks.push(`📄 [${attachment.name}](${attachment.url})`)
                         }
-                    })
+                    }
                 }
 
                 let layout = new ComponentBuilder()
@@ -53,10 +63,10 @@ module.exports = async function (message) {
                     .addText("Message:")
                     .addText(content || "_No text content_")
 
-                if (imageUrls.length > 0) {
+                if (finalAttachments.length > 0) {
                     layout.addDivider()
                     layout.addText("🖼️ Attached Images:")
-                    layout.addImages(imageUrls)
+                    layout.addImages(finalAttachments)
                 }
 
                 if (fileLinks.length > 0) {
@@ -76,7 +86,5 @@ module.exports = async function (message) {
         console.error("[Bot Catcher]: Failed to send server audit log:", auditError)
     }
 
-    setTimeout(() => {
-        message.delete()        
-    }, 10*1000)
+    message.delete()
 }
