@@ -22,11 +22,17 @@ module.exports = async function (message) {
     //     }
     // }
 
-    // Bot Catcher    
+    // Bot Catcher
     const botCatcherChannelId = settings.server_bot_catcher_channel_id
     if (botCatcherChannelId === 'none' || !botCatcherChannelId) return 
     const botCatcherChannel = await message.guild.channels.fetch(botCatcherChannelId)
     if (!botCatcherChannel || message.channel !== botCatcherChannel) return
+    
+    const adminRoleId = settings.server_admin_role_id || 'none'
+    if (message.member && adminRoleId && adminRoleId !== 'none') {
+        const isAdmin = message.member.roles.cache.has(adminRoleId)
+        if (isAdmin) return
+    }
     
     const botRoleId = settings.server_suspected_bot_role_id
     if (botRoleId && botRoleId !== 'none') {
@@ -52,7 +58,6 @@ module.exports = async function (message) {
                 content = content.substring(0, maxMessageSize) + '...'
             }
 
-            const adminRoleId = settings.server_admin_role_id || 'none'
             let additionalMessage = `<@&${adminRoleId}>`
             if (additionalMessage.includes('none')) additionalMessage = '-# set an admin role to add pings' 
 
