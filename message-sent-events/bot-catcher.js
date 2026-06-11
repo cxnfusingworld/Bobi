@@ -9,7 +9,8 @@ module.exports = async function (message) {
     const settings = await getGuildSettings(message.guild.id)
     
     const botCatcherChannelId = settings.server_bot_catcher_channel_id
-    const botCatcherChannel = botCatcherChannelId ? await message.guild.channels.fetch(botCatcherChannelId) : null
+    if (botCatcherChannelId === 'none' || botCatcherChannelId === null) return 
+    const botCatcherChannel = await message.guild.channels.fetch(botCatcherChannelId)
     if (botCatcherChannel === null || message.channel !== botCatcherChannel) return
     
     try {
