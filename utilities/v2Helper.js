@@ -16,6 +16,7 @@ class BobiV2 {
         this.container = new ContainerBuilder()
         this.files = []
         this.flags = [MessageFlags.IsComponentsV2]
+        this.allowedMentions = {}
     }
 
     // Set side accent color
@@ -87,11 +88,24 @@ class BobiV2 {
         return this
     }
 
+    // Adds a flag
+    addFlag(flag) {
+        this.flags.push(flag)
+        return this
+    }
+
+    // Turns off pings from the message
+    setNoPing() {
+        this.allowedMentions = { parse: [] }
+        return this
+    }
+
     build() {
         return {
             components: [this.container],
             files: this.files,
-            flags: this.flags
+            flags: this.flags,
+            allowedMentions: this.allowedMentions,
         }
     }
 }

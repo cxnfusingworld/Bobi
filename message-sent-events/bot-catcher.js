@@ -1,6 +1,10 @@
+const { Colors, MessageFlags } = require('discord.js')
+
 const { getGuildSettings } = require('../utilities/configHelper.js')
+const ComponentBuilder = require('../utilities/v2Helper')
 const emojis = require("../assets/emojis.json")
-const sendChannelLog = require('../utilities/channelLogger.js')
+
+const maxMessageSize = 150
 
 module.exports = async function (message) {
     if (message.author.bot) return
@@ -18,23 +22,30 @@ module.exports = async function (message) {
         if (logChannelId && logChannelId !== 'none') {
             const logChannel = await message.guild.channels.fetch(logChannelId)
             if (logChannel) {
+
                 let content = message.content
-                if (content.length > 100) {
-                    content = content.substring(0, 100)+'...'
+                if (content.length > maxMessageSize) {
+                    content = content.substring(0, maxMessageSize)+'...'
                 }
-                await sendChannelLog(logChannel, {
-                    title: `⚠️ Possible Bot ⚠️`,
-                    description: `${message.author} chatted in ${botCatcherChannel}`,
-                    color: 'Red',
-                    fields: [
-                        { name: "User", value: `<@${message.author.id}>`, inline: true },
-                        { name: "Message", value: content, inline: true },
-                    ]
-                })
+
+                let layout = new ComponentBuilder()
+                    .setColor(Colors.Red)
+                    .addText(`# ⚠️  Possible Bot  ⚠️`)
+                    .addDivider()
+                    .addText(`${message.author} chatted in ${botCatcherChannel}`)
+                    .addDivider()
+                    .addText("Message:")
+                    .addText(content)
+                    .setNoPing()
+                    .build()
+                        
+                await logChannel.send(layout)
             }
         }
     } catch (auditError) {
         console.error("[Bot Catcher]: Failed to send server audit log:", auditError)
     }
+
+    message.delete()
 
 }
