@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, InteractionContextType, EmbedBuilder, PermissionFlagsBits } = require('discord.js')
+const { SlashCommandBuilder, InteractionContextType, EmbedBuilder, PermissionFlagsBits, MessageFlags } = require('discord.js')
 const fs = require('fs')
 const path = require('path')
 
@@ -62,7 +62,7 @@ module.exports = {
                 )
                 .addStringOption(option =>
                     option.setName('value')
-                        .setDescription('true/false | 0.5 -> 50% | 1000 -> 1 second')
+                        .setDescription('true/false | 0.5 -> 50% | 1000 -> 1 second | #channel')
                         .setRequired(true)
                 )
         ),
@@ -87,7 +87,7 @@ module.exports = {
             if (!config.developer_ids.includes(interaction.user.id)) {
                 return await interaction.reply({ 
                     content: `${emojis.scared} hey wait u aren't a dev! u can't manage global settings`, 
-                    ephemeral: true 
+                    flags: MessageFlags.Ephemeral
                 })
             }
         }
@@ -98,23 +98,29 @@ module.exports = {
         if (sub === 'get-global') {
             const configEmbed = new EmbedBuilder()
                 .setTitle(`${emojis.settings} Global Configuration`)
-                .setDescription("default global settings")
+                // .setDescription("default global settings")
                 .setColor("Blurple")
                 .setTimestamp()
 
             for (const [key, data] of Object.entries(config)) {
                 if (key === 'developer_ids' || key === 'whitelisted_servers') continue
+                if (data.valueType === 'channel') continue
 
-                let displayValue = data.value
-                if (data.displayType === 'percent') displayValue = `${data.value * 100}%`
-                else if (data.displayType === 'ms') displayValue = `${data.value / 1000}s`
-                else if (data.valueType === 'boolean') displayValue = data.value ? '🟢 Enabled' : '🔴 Disabled'
+                let visualValue = data.value
+                if (data.displayType === 'percent') visualValue = `${data.value * 100}%`
+                else if (data.displayType === 'ms') visualValue = `${data.value / 1000}s`
+                else if (data.valueType === 'boolean') visualValue = data.value ? '🟢 Enabled' : '🔴 Disabled'
+                else if (data.displayType === 'channel' && visualValue !== 'none') {
+                    visualValue = `<#${visualValue}>`
+                    key = key.replace('_id', '') 
+                }
+                if (data.displayType !== 'channel') visualValue = `\`${visualValue}\``
 
                 const cleanName = key.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
-                configEmbed.addFields({ name: cleanName, value: `\`${displayValue}\``, inline: true })
+                configEmbed.addFields({ name: cleanName, value: `\`${visualValue}\``, inline: true })
             }
 
-            return await interaction.reply({ embeds: [configEmbed], ephemeral: true })
+            return await interaction.reply({ embeds: [configEmbed], flags: MessageFlags.Ephemeral })
         }
 
         // ==========================================
@@ -123,9 +129,10 @@ module.exports = {
         if (sub === 'set-global') {
             const settingKey = interaction.options.getString('setting')
             let rawValue = interaction.options.getString('value')
+            settingKey = settingKey.replaceAll(' ', '_')
 
             if (!config[settingKey]) {
-                return await interaction.reply({ content: `global setting \`${settingKey}\` doesn't exist :(`, ephemeral: true })
+                return await interaction.reply({ content: `global setting \`${settingKey}\` doesn't exist :(`, flags: MessageFlags.Ephemeral })
             }
 
             const targetSetting = config[settingKey]
@@ -133,10 +140,10 @@ module.exports = {
             if (targetSetting.valueType === 'boolean') {
                 if (rawValue.toLowerCase() === 'true') rawValue = true
                 else if (rawValue.toLowerCase() === 'false') rawValue = false
-                else return await interaction.reply({ content: `this setting requires a boolean (\`true\` or \`false\`)`, ephemeral: true })
+                else return await interaction.reply({ content: `this setting requires a boolean (\`true\` or \`false\`)`, flags: MessageFlags.Ephemeral })
             } else if (targetSetting.valueType === 'number') {
                 const parsedNum = Number(rawValue)
-                if (isNaN(parsedNum)) return await interaction.reply({ content: `this setting requires a valid number`, ephemeral: true })
+                if (isNaN(parsedNum)) return await interaction.reply({ content: `this setting requires a valid number`, flags: MessageFlags.Ephemeral })
                 rawValue = parsedNum
             }
 
@@ -144,8 +151,8 @@ module.exports = {
             fs.writeFileSync(configPath, JSON.stringify(config, null, 4))
 
             return await interaction.reply({
-                content: `successfully set global variable \`${settingKey}\` to \`${rawValue}\``,
-                ephemeral: true
+                content: `successfully set global variable \`${settingKey}\` to ${rawValue}`,
+                flags: MessageFlags.Ephemeral
             })
         }
 
@@ -153,7 +160,7 @@ module.exports = {
         // SUBCOMMAND: GET-SERVER
         // ==========================================
         if (sub === 'get-server') {
-            await interaction.deferReply({ ephemeral: true })
+            await interaction.deferReply({ flags: MessageFlags.Ephemeral })
 
             let serverSettings = await GuildConfig.findOne({ guildId: interaction.guild.id })
             if (!serverSettings) {
@@ -162,22 +169,28 @@ module.exports = {
 
             const embed = new EmbedBuilder()
                 .setTitle(`${emojis.settings} ${interaction.guild.name} Configuration`)
-                .setDescription("server specific settings")
+                // .setDescription("server specific settings")
                 .setColor("Orange")
                 .setTimestamp()
 
-            for (const [key, data] of Object.entries(config)) {
+            for (let [key, data] of Object.entries(config)) {
                 if (key === 'developer_ids' || key === 'whitelisted_servers') continue
+                if (data.valueType === 'channel') key = key+'_id'
 
                 const dbValue = serverSettings[key] !== undefined ? serverSettings[key] : data.value
 
-                let displayValue = dbValue
-                if (data.displayType === 'percent') displayValue = `${dbValue * 100}%`
-                else if (data.displayType === 'ms') displayValue = `${dbValue / 1000}s`
-                else if (data.valueType === 'boolean') displayValue = dbValue ? '🟢 Enabled' : '🔴 Disabled'
+                let visualValue = dbValue
+                if (data.displayType === 'percent') visualValue = `${dbValue * 100}%`
+                else if (data.displayType === 'ms') visualValue = `${dbValue / 1000}s`
+                else if (data.valueType === 'boolean') visualValue = dbValue ? '🟢 Enabled' : '🔴 Disabled'
+                else if (data.displayType === 'channel') {
+                    key = key.replaceAll('_id', '')
+                    if (dbValue !== 'none') visualValue = `<#${dbValue}>`
+                }
 
                 const cleanName = key.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
-                embed.addFields({ name: cleanName, value: `\`${displayValue}\``, inline: true })
+                if (data.displayType !== 'channel') visualValue = `\`${visualValue}\``
+                embed.addFields({ name: cleanName, value: `${visualValue}`, inline: true })
             }
 
             return await interaction.editReply({ embeds: [embed] })
@@ -187,10 +200,11 @@ module.exports = {
         // SUBCOMMAND: SET-SERVER
         // ==========================================
         if (sub === 'set-server') {
-            await interaction.deferReply({ ephemeral: true })
+            await interaction.deferReply({ flags: MessageFlags.Ephemeral })
 
-            const settingKey = interaction.options.getString('setting')
+            let settingKey = interaction.options.getString('setting')
             let rawValue = interaction.options.getString('value')
+            settingKey = settingKey.replaceAll(' ', '_')
 
             if (!config[settingKey]) {
                 return await interaction.editReply({ content: `hmm that setting doesnt exist 🤔` })
@@ -210,6 +224,12 @@ module.exports = {
                 const parsedNum = Number(rawValue)
                 if (isNaN(parsedNum)) return await interaction.editReply({ content: `this setting requires a valid numeric value` })
                 rawValue = parsedNum
+            } else if (targetSetting.valueType === 'channel') {
+                settingKey = settingKey+'_id'
+                rawValue = rawValue.replace(/[^\d]/g, '')
+                if (!rawValue || rawValue.length < 17) {
+                    return await interaction.editReply({ content: `please provide a valid channel mention or channel ID` })
+                }
             }
 
             const serverSettings = await GuildConfig.findOneAndUpdate(
@@ -217,6 +237,8 @@ module.exports = {
                 { [settingKey]: rawValue },
                 { upsert: true, new: true }
             )
+            
+            if (targetSetting.displayType === 'channel') settingKey = settingKey.replaceAll('_id', '')
 
             const cleanName = key => key.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
             const formattedName = cleanName(settingKey)
@@ -225,6 +247,9 @@ module.exports = {
             if (targetSetting.displayType === 'percent') visualValue = `${rawValue * 100}%`
             else if (targetSetting.displayType === 'ms') visualValue = `${rawValue / 1000}s`
             else if (targetSetting.valueType === 'boolean') visualValue = rawValue ? '🟢 Enabled' : '🔴 Disabled'
+            else if (targetSetting.displayType === 'channel') visualValue = `<#${rawValue}>`
+            
+            if (targetSetting.displayType !== 'channel') visualValue = `\`${visualValue}\``
 
             try {
                 const logChannelId = serverSettings.server_log_channel_id
@@ -237,7 +262,7 @@ module.exports = {
                             color: "Orange",
                             fields: [
                                 { name: "Setting", value: `\`${formattedName}\``, inline: true },
-                                { name: "New Value", value: `\`${visualValue}\``, inline: true }
+                                { name: "New Value", value: visualValue, inline: true }
                             ]
                         })
                     }
@@ -247,8 +272,8 @@ module.exports = {
             }
 
             return await interaction.editReply({
-                content: `successfully updated server setting **${formattedName}** to \`${visualValue}\`!`
+                content: `successfully updated server setting **${formattedName}** to ${visualValue}!`
             })
         }
-    },
+    }
 }

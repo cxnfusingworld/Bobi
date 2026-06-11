@@ -14,8 +14,8 @@ module.exports = async function (channel, logData) {
 
     try {
         const embed = new EmbedBuilder()
-            .setTitle(logData.title)
-            .setDescription(logData.description)
+            .setTitle(logData.title || '')
+            .setDescription(logData.description || '')
             .setColor(logData.color || "Orange")
             .setTimestamp()
 
@@ -26,7 +26,7 @@ module.exports = async function (channel, logData) {
         await channel.send({ embeds: [embed] })
         return true
     } catch (error) {
-        console.error(`[Logger Utility Error] Failed to send log: ${error.message}`)
+        console.error(`[Channel Logger Error] Failed to send log: ${error.message}`)
         return false
     }
 }

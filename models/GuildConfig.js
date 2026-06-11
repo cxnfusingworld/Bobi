@@ -9,12 +9,16 @@ const schemaDefinition = {
     }
 }
 
-for (const [key, data] of Object.entries(config)) {
+for (let [key, data] of Object.entries(config)) {
     if (key === 'developer_ids' || key === 'whitelisted_servers') continue
 
     let nativeType
     if (data.valueType === 'boolean') nativeType = Boolean
     else if (data.valueType === 'number') nativeType = Number
+    else if (data.valueType === 'channel') {
+        nativeType = String
+        key = key+'_id'
+    }
     else nativeType = String // Default fallback
 
     schemaDefinition[key] = {

@@ -40,7 +40,6 @@ module.exports = {
             const emojiMap = { red: '🔴', blue: '🔵', yellow: '🟡', white: '⚪', black: '⚫' };
             return await interaction.reply({
                 content: `mixing ${emojiMap[first]} ${first} and ${emojiMap[second]} ${second} is just more ${first} lol`,
-                // ephemeral: true
             });
         }
 
@@ -69,7 +68,6 @@ module.exports = {
         } else {
             await interaction.reply({
                 content: `i genuinely have NO clue vro`,
-                // ephemeral: true
             });
         }
     },

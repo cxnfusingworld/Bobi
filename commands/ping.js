@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, InteractionContextType } = require('discord.js')
+const { SlashCommandBuilder, InteractionContextType, MessageFlags } = require('discord.js')
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -14,7 +14,7 @@ module.exports = {
         const { resource } = await interaction.reply({ 
             content: 'calculating ball velocity...', 
             withResponse: true,
-            ephemeral: true,
+            flags: MessageFlags.Ephemeral,
         })
 
         const roundtripLatency = Math.max(resource.message.createdTimestamp - interaction.createdTimestamp, 0)

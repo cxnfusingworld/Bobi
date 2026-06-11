@@ -6,6 +6,7 @@ const {
     ActionRowBuilder,
     ButtonBuilder,
     ButtonStyle,
+    MessageFlags
 } = require('discord.js')
 
 // Colors
@@ -41,7 +42,7 @@ module.exports = {
             if (!interaction.inGuild()) {
                 return await interaction.reply({
                     content: 'server-info only works in servers mb 💔💔',
-                    ephemeral: true
+                    flags: MessageFlags.Ephemeral
                 })
             }
             
@@ -153,7 +154,7 @@ module.exports = {
             })
 
             collector.on('collect', async buttonInteraction => {
-                // await buttonInteraction.deferReply({ ephemeral: true })
+                // await buttonInteraction.deferReply({ flags: MessageFlags.Ephemeral })
 
                 const imageEmbed = new EmbedBuilder()
                     .setColor(imageColor)
@@ -166,7 +167,7 @@ module.exports = {
 
                 await buttonInteraction.reply({
                     embeds: [imageEmbed],
-                    ephemeral: true,
+                    flags: MessageFlags.Ephemeral,
                 })
             })
 

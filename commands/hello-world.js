@@ -73,7 +73,6 @@ module.exports = {
 
         await interaction.reply({
             content: final,
-            // ephemeral: true,
         })
     },
 }

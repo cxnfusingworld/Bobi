@@ -20,7 +20,7 @@ module.exports = {
         else
             selfieCommand = '`\u200B/selfie`'
 
-        interaction.reply({
+        await interaction.reply({
             content: `*cough* alright then..
 bobi was a **stray cat**, and *technically* still is.
 she lives in texas, and you can usually find her on the back porch

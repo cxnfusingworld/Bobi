@@ -54,10 +54,15 @@
 
 
 
-    "server_log_channel_id": {
+    "server_log_channel": {
         "value": "none",
-        "valueType": "string",
-        "displayType": "text"
+        "valueType": "channel",
+        "displayType": "channel"
+    },
+    "server_bot_catcher_channel": {
+        "value": "none",
+        "valueType": "channel",
+        "displayType": "channel"
     }
 
 }

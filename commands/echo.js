@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, InteractionContextType, PermissionsBitField, ChannelType } = require('discord.js')
+const { SlashCommandBuilder, InteractionContextType, PermissionsBitField, ChannelType, MessageFlags } = require('discord.js')
 const emojis = require('../assets/emojis.json')
 
 module.exports = {
@@ -34,7 +34,7 @@ module.exports = {
         if (!allowedToUse) {                
             return await interaction.reply({
                 content: `u cant use this command ${emojis.no}`,
-                ephemeral: true
+                flags: MessageFlags.Ephemeral
             })
         }
 
@@ -46,12 +46,12 @@ module.exports = {
                 await targetChannel.send(message)
                 return await interaction.reply({
                     content: `sure i sent that to <#${targetChannel.id}>`,
-                    ephemeral: true
+                    flags: MessageFlags.Ephemeral
                 })
             } catch (error) {
                 return await interaction.reply({
                     content: `i cant talk in <#${targetChannel.id}> 😔💔`,
-                    ephemeral: true
+                    flags: MessageFlags.Ephemeral
                 })
             }
         }

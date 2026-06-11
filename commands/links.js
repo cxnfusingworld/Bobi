@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, InteractionContextType } = require('discord.js')
+const { SlashCommandBuilder, InteractionContextType, MessageFlags } = require('discord.js')
 const emojis = require('../assets/emojis.json')
 
 module.exports = {
@@ -25,7 +25,7 @@ module.exports = {
 # ═══════ ${emojis.heart} Support ═══════
 ## 💵  |  [Donate](<https://www.roblox.com/games/138236517199900/Donations>)
 # ═════════════════════`,
-            ephemeral: true,
+            flags: MessageFlags.Ephemeral,
         })
         
     },

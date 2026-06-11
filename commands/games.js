@@ -5,7 +5,8 @@ const {
     ButtonStyle, 
     ComponentType,
     InteractionContextType,
-    EmbedBuilder
+    EmbedBuilder,
+    MessageFlags
 } = require('discord.js')
 const emojis = require("../assets/emojis.json")
 
@@ -49,7 +50,7 @@ module.exports = {
             }
 
             if (!isAiGame && (opponent.bot || opponent.id === challenger.id)) {
-                return interaction.reply({ content: `you cant play against a bot or urself ${emojis.no}`, ephemeral: true })
+                return interaction.reply({ content: `you cant play against a bot or urself ${emojis.no}`, flags: MessageFlags.Ephemeral })
             }
 
             let board = Array(9).fill(' ')
@@ -124,7 +125,7 @@ module.exports = {
 
             collector.on('collect', async btnInteraction => {
                 if (btnInteraction.user.id !== currentTurn) {
-                    return btnInteraction.reply({ content: `nuh uh wait ur turn ${emojis.no}`, ephemeral: true })
+                    return btnInteraction.reply({ content: `nuh uh wait ur turn ${emojis.no}`, flags: MessageFlags.Ephemeral })
                 }
 
                 const index = parseInt(btnInteraction.customId.split('_')[1])
@@ -274,11 +275,11 @@ module.exports = {
 
             collector.on('collect', async btnInteraction => {
                 if (btnInteraction.user.id !== challenger.id && btnInteraction.user.id !== opponent.id) {
-                    return btnInteraction.reply({ content: `ur not playing ${emojis.no}`, ephemeral: true })
+                    return btnInteraction.reply({ content: `ur not playing ${emojis.no}`, flags: MessageFlags.Ephemeral })
                 }                
                 if ((btnInteraction.user.id === challenger.id && challengerChoice !== null) ||
                     (btnInteraction.user.id === opponent.id && opponentChoice !== null)) {
-                    return btnInteraction.reply({ content: `u already made a choice ${emojis.no}`, ephemeral: true })
+                    return btnInteraction.reply({ content: `u already made a choice ${emojis.no}`, flags: MessageFlags.Ephemeral })
                 }
                 
                 if (btnInteraction.user.id === challenger.id) {

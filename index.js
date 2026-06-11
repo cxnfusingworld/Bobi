@@ -1,7 +1,7 @@
 /// Variables and Set Up \\\
 
 require('dotenv').config()
-const { Client, GatewayIntentBits, REST, Routes } = require('discord.js')
+const { Client, GatewayIntentBits, REST, Routes, MessageFlags } = require('discord.js')
 const fs = require('fs')
 const path = require('path')
 const mongoose = require('mongoose')
@@ -113,9 +113,9 @@ async function onInteraction(interaction) {
             const errorMessage = 'hmm smth broke 🤔🤔 try again in a bit'
             
             if (interaction.replied || interaction.deferred) {
-                await interaction.followUp({ content: errorMessage, ephemeral: true })
+                await interaction.followUp({ content: errorMessage, flags: MessageFlags.Ephemeral })
             } else {
-                await interaction.reply({ content: errorMessage, ephemeral: true })
+                await interaction.reply({ content: errorMessage, flags: MessageFlags.Ephemeral })
             }
         }
     }
@@ -180,6 +180,14 @@ client.on('messageCreate', onMessageSent)
 client.once('clientReady', async () => {
 
     log(`Logged in as ${client.user.tag}!`)
+
+    const commands = await client.application.commands.fetch();
+
+    console.log('--- Registered Command IDs ------\n');
+    commands.forEach(command => {
+        console.log(`name: /${command.name} | id: ${command.id}`);
+    });
+    console.log('\n---------------------------------');
    
     log(`Checking whitelisted servers...`)
     for (const [id, guild] of client.guilds.cache) await checkGuildAccess(guild)

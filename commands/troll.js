@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder, PermissionsBitField, InteractionContextType } = require('discord.js')
+const { SlashCommandBuilder, EmbedBuilder, PermissionsBitField, InteractionContextType, MessageFlags } = require('discord.js')
 const emojis = require('../assets/emojis.json')
 
 module.exports = {
@@ -31,7 +31,7 @@ module.exports = {
             if (!interaction.inGuild()) {
                 return await interaction.reply({
                     content: 'fake ban only works in servers with me added, mb 💔',
-                    ephemeral: true
+                    flags: MessageFlags.Ephemeral
                 });
             }
             
@@ -49,7 +49,7 @@ module.exports = {
             if (!allowedToUse) {                
                 return await interaction.reply({
                     content: `u cant use this command ${emojis.no}`,
-                    ephemeral: true
+                    flags: MessageFlags.Ephemeral
                 })
             }
 
@@ -77,7 +77,7 @@ module.exports = {
                     text: `ID: ${targetUser.id} • ${discordTimestamp}` 
                 })
 
-            await interaction.reply({ content: 'sure lol', ephemeral: true })
+            await interaction.reply({ content: 'sure lol', flags: MessageFlags.Ephemeral })
             return await interaction.channel.send({ embeds: [logEmbed] })
         }
     },

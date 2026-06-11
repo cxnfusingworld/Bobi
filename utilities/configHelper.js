@@ -7,7 +7,6 @@ const GuildConfig = require('../models/GuildConfig.js');
  * @returns {Promise<Object>} An object containing all active settings for that guild
  */
 async function getGuildSettings(guildId) {
-    // If it's a DM or has no guildId, just return global defaults right away
     if (!guildId) {
         const fallbacks = {};
         for (const [key, data] of Object.entries(globalConfig)) {
@@ -16,16 +15,15 @@ async function getGuildSettings(guildId) {
         return fallbacks;
     }
 
-    // Try to find the server document in MongoDB Atlas
     const serverSettings = await GuildConfig.findOne({ guildId });
 
     const activeConfig = {};
 
-    // Loop through your master json keys to construct the perfect layout
-    for (const [key, data] of Object.entries(globalConfig)) {
-        if (key === 'developer_ids') continue;
+    for (let [key, data] of Object.entries(globalConfig)) {
+        if (key === 'developer_ids' || key === 'whitelisted_servers') continue
 
-        // Use database value if it exists, otherwise use the global config baseline
+        if (data.valueType === 'channel') key = key+'_id'
+
         activeConfig[key] = (serverSettings && serverSettings[key] !== undefined) 
             ? serverSettings[key] 
             : data.value;
