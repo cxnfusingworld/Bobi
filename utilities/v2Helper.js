@@ -15,6 +15,7 @@ class BobiV2 {
     constructor() {
         this.container = new ContainerBuilder()
         this.files = []
+        this.flags = [MessageFlags.IsComponentsV2]
     }
 
     // Set side accent color
@@ -79,13 +80,18 @@ class BobiV2 {
         )
         return this
     }
+    
+    // Set ephemeral
+    setEphemeral() {
+        this.flags.push(MessageFlags.Ephemeral)
+        return this
+    }
 
-    // The export payload needed to reply to Discord
     build() {
         return {
             components: [this.container],
             files: this.files,
-            flags: MessageFlags.IsComponentsV2 
+            flags: this.flags
         }
     }
 }

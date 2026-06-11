@@ -30,10 +30,10 @@ const snippets = {
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('hello-world')
-        .setDescription('Gives you basic code for printing "Hello World!"')
+        .setDescription('gives you basic code for printing "Hello World!"')
         .addStringOption(option =>
             option.setName("language")
-                .setDescription('Code language to print "Hello World!" in')
+                .setDescription('code language to print "Hello World!" in')
                 .addChoices(
                     { name: 'Lua/Luau', value: 'luau' },
                     { name: 'JavaScript/TypeScript', value: 'js' },
