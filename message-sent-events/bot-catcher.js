@@ -4,7 +4,7 @@ const { getGuildSettings } = require('../utilities/configHelper.js')
 const ComponentBuilder = require('../utilities/v2Helper')
 const emojis = require("../assets/emojis.json")
 
-const maxMessageSize = 150
+const maxMessageSize = 500
 
 module.exports = async function (message) {
     if (message.author.bot) return
@@ -25,7 +25,23 @@ module.exports = async function (message) {
 
                 let content = message.content
                 if (content.length > maxMessageSize) {
-                    content = content.substring(0, maxMessageSize)+'...'
+                    content = content.substring(0, maxMessageSize) + '...'
+                }
+
+                const imageUrls = []
+                const fileLinks = []
+
+                if (message.attachments.size > 0) {
+                    message.attachments.forEach(attachment => {
+                        const isImage = attachment.contentType?.startsWith('image/') || 
+                                        /\.(jpg|jpeg|png|gif|webp)$/i.test(attachment.url)
+                        
+                        if (isImage) {
+                            imageUrls.push(attachment.url)
+                        } else {
+                            fileLinks.push(`📄 [${attachment.name}](${attachment.url})`)
+                        }
+                    })
                 }
 
                 let layout = new ComponentBuilder()
@@ -35,17 +51,32 @@ module.exports = async function (message) {
                     .addText(`${message.author} chatted in ${botCatcherChannel}`)
                     .addDivider()
                     .addText("Message:")
-                    .addText(content)
+                    .addText(content || "_No text content_")
+
+                if (imageUrls.length > 0) {
+                    layout.addDivider()
+                    layout.addText("🖼️ Attached Images:")
+                    layout.addImages(imageUrls)
+                }
+
+                if (fileLinks.length > 0) {
+                    layout.addDivider()
+                    layout.addText("📎 Attached Files:")
+                    layout.addText(fileLinks.join('\n'))
+                }
+
+                const finalPayload = layout
                     .setNoPing()
                     .build()
                         
-                await logChannel.send(layout)
+                await logChannel.send(finalPayload)
             }
         }
     } catch (auditError) {
         console.error("[Bot Catcher]: Failed to send server audit log:", auditError)
     }
 
-    message.delete()
-
+    setTimeout(() => {
+        message.delete()        
+    }, 10*1000)
 }
