@@ -82,6 +82,13 @@ module.exports = {
     },
 
     async execute(interaction) {
+        if (!interaction.inGuild() || !interaction.guild) {
+            return await interaction.reply({
+                content: 'this only works in servers mb 💔💔',
+                flags: MessageFlags.Ephemeral
+            })
+        }
+
         config = JSON.parse(fs.readFileSync(configPath, 'utf-8'))
         const sub = interaction.options.getSubcommand()
 

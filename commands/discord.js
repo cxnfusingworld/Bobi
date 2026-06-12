@@ -39,7 +39,7 @@ module.exports = {
 
         // Server Info Subcommand
         if (sub === 'server-info') {
-            if (!interaction.inGuild()) {
+            if (!interaction.inGuild() || !interaction.guild) {
                 return await interaction.reply({
                     content: 'server-info only works in servers mb 💔💔',
                     flags: MessageFlags.Ephemeral
