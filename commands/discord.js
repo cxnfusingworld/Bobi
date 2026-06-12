@@ -41,7 +41,7 @@ module.exports = {
         if (sub === 'server-info') {
             if (!interaction.inGuild() || !interaction.guild) {
                 return await interaction.reply({
-                    content: 'server-info only works in servers mb 💔💔',
+                    content: 'server-info only works in servers im in mb 💔💔',
                     flags: MessageFlags.Ephemeral
                 })
             }

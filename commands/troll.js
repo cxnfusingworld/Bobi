@@ -28,7 +28,7 @@ module.exports = {
         const sub = interaction.options.getSubcommand()
 
         if (sub === 'fake-ban') {
-            if (!interaction.inGuild()) {
+            if (!interaction.inGuild() || !interaction.guild) {
                 return await interaction.reply({
                     content: 'fake ban only works in servers with me added, mb 💔',
                     flags: MessageFlags.Ephemeral
